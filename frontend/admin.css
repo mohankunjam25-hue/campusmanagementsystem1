@@ -1,0 +1,399 @@
+/* ==========================================================================
+   1. VARIABLES & RESET
+   ========================================================================== */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success-color: #16a34a;
+    --warning-color: #ca8a04;
+    --danger-color: #dc2626;
+
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-light: #ffffff;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --radius: 8px;
+    --transition: all 0.2s ease-in-out;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   2. HEADER & NAVIGATION
+   ========================================================================== */
+.admin-header {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.admin-nav {
+    display: flex;
+    gap: 24px;
+}
+
+.admin-nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 8px 4px;
+    border-bottom: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.admin-nav a:hover,
+.admin-nav a[href="admin.html"] {
+    /* Temporary active state for dashboard */
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+}
+
+.admin-account {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+#adminName {
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+#logoutBtn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+#logoutBtn:hover {
+    background-color: #f1f5f9;
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+/* ==========================================================================
+   3. MAIN LAYOUT & DASHBOARD HEADER
+   ========================================================================== */
+.admin-main {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+.dashboard-header {
+    margin-bottom: 32px;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.dashboard-header p {
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   4. STATISTICS CARDS
+   ========================================================================== */
+.complaint-statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-card h2 {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.stat-card p {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Accent lines for specific cards to improve layout scanability */
+.stat-card:nth-child(2) p {
+    color: var(--danger-color);
+}
+
+/* Pending */
+.stat-card:nth-child(3) p {
+    color: var(--warning-color);
+}
+
+/* In Progress */
+.stat-card:nth-child(4) p {
+    color: var(--success-color);
+}
+
+/* Resolved */
+
+/* ==========================================================================
+   5. FILTERS SECTION
+   ========================================================================== */
+.complaints-section {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+}
+
+.section-header {
+    margin-bottom: 24px;
+}
+
+.section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.section-header p {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.complaint-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--primary-color);
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ==========================================================================
+   6. COMPLAINTS TABLE
+   ========================================================================== */
+.complaints-table-container {
+    width: 100%;
+    overflow-x: auto;
+    /* Desktop grid breaks safely into horizontal scroll on small mobile screens */
+}
+
+.complaints-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.complaints-table caption {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.complaints-table th {
+    background-color: #f8fafc;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.complaints-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.complaints-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Status Badges Placeholder (Highly recommended for your admin.js dynamic logic) */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.pending {
+    background-color: #fee2e2;
+    color: var(--danger-color);
+}
+
+.status-badge.progress {
+    background-color: #fef9c3;
+    color: var(--warning-color);
+}
+
+.status-badge.resolved {
+    background-color: #dcfce7;
+    color: var(--success-color);
+}
+
+/* Table Action Buttons layout */
+.action-btn {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--transition);
+}
+
+.action-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+/* ==========================================================================
+   7. FOOTER
+   ========================================================================== */
+.admin-footer {
+    text-align: center;
+    padding: 32px 24px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 60px;
+    background-color: var(--bg-card);
+}
+
+/* ==========================================================================
+   8. RESPONSIVE DESIGN (Media Queries)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        height: auto;
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .admin-nav {
+        width: 100%;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .admin-account {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .admin-main {
+        margin: 20px auto;
+    }
+
+    .complaint-filters {
+        flex-direction: column;
+    }
+
+    .filter-group {
+        width: 100%;
+    }
+}
