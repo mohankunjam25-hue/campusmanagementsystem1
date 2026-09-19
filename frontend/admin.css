@@ -1,594 +1,388 @@
-/* ========================================
-   ADMIN HEADER
-======================================== */
+/* =========================
+   ADMIN CSS
+========================= */
 
-.admin-header {
-    width: 100%;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.header-container {
-    max-width: 1400px;
-    height: 70px;
-    margin: 0 auto;
-    padding: 0 30px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo h1 {
+* {
     margin: 0;
-    font-size: 22px;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
     color: #1f2937;
 }
 
+/* =========================
+   ADMIN LOGIN
+========================= */
 
-/* ========================================
-   NAVIGATION
-======================================== */
-
-.admin-header nav ul {
+.admin-login-page {
+    min-height: 100vh;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 30px;
-
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
+    background: #f5f7fb;
+    padding: 20px;
 }
 
-.admin-header nav a {
-    color: #374151;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 500;
+.admin-login-card {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
 }
 
-.admin-header nav a:hover {
-    color: #2563eb;
-}
-
-
-/* ========================================
-   ADMIN ACCOUNT
-======================================== */
-
-.admin-account {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-#adminName {
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
-}
-
-#logoutBtn {
-    border: none;
-    padding: 9px 16px;
-
-    background-color: #dc2626;
-    color: #ffffff;
-
-    border-radius: 6px;
-
-    cursor: pointer;
-    font-size: 14px;
-}
-
-#logoutBtn:hover {
-    background-color: #b91c1c;
-}
-
-
-/* ========================================
-   MAIN
-======================================== */
-
-.admin-main {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 35px 30px;
-}
-
-
-/* ========================================
-   DASHBOARD HEADER
-======================================== */
-
-.dashboard-header {
+.admin-logo {
+    text-align: center;
     margin-bottom: 30px;
 }
 
-.dashboard-header h2 {
-    margin: 0 0 8px;
-
+.admin-logo h1 {
     font-size: 28px;
-    color: #111827;
+    margin-bottom: 8px;
 }
 
-.dashboard-header p {
-    margin: 0;
-
+.admin-logo p {
     color: #6b7280;
+    font-size: 14px;
+}
+
+.admin-form-group {
+    margin-bottom: 20px;
+}
+
+.admin-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.admin-form-group input {
+    width: 100%;
+    padding: 13px 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
     font-size: 15px;
 }
 
-
-/* ========================================
-   STATISTICS
-======================================== */
-
-.complaint-statistics {
-    margin-bottom: 35px;
-}
-
-.complaint-statistics>h2 {
-    margin-bottom: 18px;
-
-    font-size: 20px;
-    color: #1f2937;
-}
-
-.statistics-container {
-    display: grid;
-
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 20px;
-}
-
-.stat-card {
-    padding: 22px;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-}
-
-.stat-card h3 {
-    margin: 0 0 12px;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    color: #6b7280;
-}
-
-.stat-card p {
-    margin: 0;
-
-    font-size: 30px;
-    font-weight: 700;
-
-    color: #111827;
-}
-
-
-/* ========================================
-   COMPLAINT SECTION
-======================================== */
-
-.complaints-section {
-    background-color: #ffffff;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-
-    padding: 25px;
-}
-
-.section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 25px;
-}
-
-.section-header h2 {
-    margin: 0 0 6px;
-
-    font-size: 21px;
-    color: #111827;
-}
-
-.section-header p {
-    margin: 0;
-
-    color: #6b7280;
-    font-size: 14px;
-}
-
-
-/* ========================================
-   FILTERS
-======================================== */
-
-#complaintFilterForm {
-    margin-bottom: 25px;
-}
-
-.filter-group {
-    display: grid;
-
-    grid-template-columns: 2fr 1fr 1fr;
-
-    gap: 15px;
-}
-
-.filter-group>div {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.filter-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #374151;
-}
-
-.filter-group input,
-.filter-group select {
-    width: 100%;
-    box-sizing: border-box;
-
-    padding: 10px 12px;
-
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-
-    background-color: #ffffff;
-
-    font-size: 14px;
-    color: #374151;
-
-    outline: none;
-}
-
-.filter-group input:focus,
-.filter-group select:focus {
+.admin-form-group input:focus {
     border-color: #2563eb;
 }
 
-
-/* ========================================
-   TABLE
-======================================== */
-
-.table-container {
+.admin-login-btn {
     width: 100%;
-    overflow-x: auto;
-}
-
-.complaints-table {
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 900px;
-}
-
-.complaints-table caption {
-    position: absolute;
-
-    width: 1px;
-    height: 1px;
-
-    overflow: hidden;
-}
-
-.complaints-table th {
-    padding: 14px 12px;
-
-    background-color: #f9fafb;
-
-    border-bottom: 1px solid #e5e7eb;
-
-    text-align: left;
-
-    font-size: 13px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
     font-weight: 600;
-
-    color: #374151;
+    cursor: pointer;
 }
 
-.complaints-table td {
-    padding: 15px 12px;
+.admin-login-btn:hover {
+    background: #1d4ed8;
+}
 
-    border-bottom: 1px solid #e5e7eb;
-
+.student-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #2563eb;
+    text-decoration: none;
     font-size: 14px;
-
-    color: #4b5563;
 }
 
-.complaints-table tbody tr:hover {
-    background-color: #f9fafb;
+/* =========================
+   ADMIN DASHBOARD
+========================= */
+
+.admin-dashboard {
+    min-height: 100vh;
+    display: flex;
 }
 
+/* Sidebar */
 
-/* ========================================
-   STATUS
-======================================== */
+.admin-sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #111827;
+    color: white;
+    padding: 25px 15px;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.admin-brand {
+    text-align: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #374151;
+}
+
+.admin-brand h2 {
+    font-size: 21px;
+}
+
+.admin-brand p {
+    color: #9ca3af;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.admin-nav {
+    margin-top: 30px;
+}
+
+.admin-nav a {
+    display: block;
+    padding: 13px 15px;
+    margin-bottom: 8px;
+    color: #d1d5db;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.admin-nav a:hover,
+.admin-nav a.active {
+    background: #2563eb;
+    color: white;
+}
+
+.admin-logout {
+    position: absolute;
+    bottom: 25px;
+    left: 15px;
+    right: 15px;
+}
+
+.admin-logout button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #dc2626;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* Main */
+
+.admin-main {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    padding: 30px;
+}
+
+.admin-header {
+    margin-bottom: 30px;
+}
+
+.admin-header h1 {
+    font-size: 28px;
+}
+
+.admin-header p {
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.admin-stat-card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.admin-stat-card h3 {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.admin-stat-card .number {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* =========================
+   FILTER
+========================= */
+
+.admin-filter {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.admin-filter input,
+.admin-filter select {
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+}
+
+.admin-filter input {
+    flex: 1;
+}
+
+/* =========================
+   COMPLAINT LIST
+========================= */
+
+.admin-complaint-list {
+    display: grid;
+    gap: 15px;
+}
+
+.admin-complaint-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.admin-complaint-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.admin-complaint-card h3 {
+    font-size: 18px;
+}
+
+.admin-complaint-card p {
+    color: #6b7280;
+    margin: 7px 0;
+}
 
 .status {
     display: inline-block;
-
-    padding: 5px 10px;
-
+    padding: 6px 10px;
     border-radius: 20px;
-
     font-size: 12px;
     font-weight: 600;
 }
 
-.status-pending {
-    background-color: #fef3c7;
+.status.pending {
+    background: #fef3c7;
     color: #92400e;
 }
 
-.status-progress {
-    background-color: #dbeafe;
+.status.progress {
+    background: #dbeafe;
     color: #1e40af;
 }
 
-.status-resolved {
-    background-color: #dcfce7;
+.status.resolved {
+    background: #dcfce7;
     color: #166534;
 }
 
-.status-unknown {
-    background-color: #f3f4f6;
-    color: #374151;
-}
+/* =========================
+   UPDATE BUTTON
+========================= */
 
-
-/* ========================================
-   VIEW BUTTON
-======================================== */
-
-.view-btn {
-    padding: 7px 13px;
-
-    border: none;
-    border-radius: 5px;
-
-    background-color: #2563eb;
-    color: #ffffff;
-
-    cursor: pointer;
-
-    font-size: 13px;
-}
-
-.view-btn:hover {
-    background-color: #1d4ed8;
-}
-
-
-/* ========================================
-   COMPLAINT DETAILS
-======================================== */
-
-.complaint-details-section {
-    margin-top: 30px;
-
-    padding: 25px;
-
-    background-color: #ffffff;
-
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-}
-
-.complaint-details-section[hidden] {
-    display: none;
-}
-
-#closeDetailsBtn {
-    padding: 8px 14px;
-
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-
-    background-color: #ffffff;
-
-    color: #374151;
-
-    cursor: pointer;
-}
-
-#closeDetailsBtn:hover {
-    background-color: #f3f4f6;
-}
-
-
-/* ========================================
-   DETAILS CONTENT
-======================================== */
-
-#complaintDetails {
-    margin-bottom: 25px;
-}
-
-#complaintDetails h3 {
-    margin: 0 0 20px;
-
-    font-size: 22px;
-
-    color: #111827;
-}
-
-#complaintDetails p {
-    margin: 10px 0;
-
-    font-size: 14px;
-    color: #4b5563;
-}
-
-#complaintDetails strong {
-    color: #111827;
-}
-
-
-/* ========================================
-   UPDATE FORM
-======================================== */
-
-#updateComplaintForm {
+.admin-update {
+    margin-top: 15px;
     display: flex;
-    flex-direction: column;
-
-    gap: 18px;
-
-    max-width: 600px;
-
-    padding-top: 20px;
-
-    border-top: 1px solid #e5e7eb;
+    gap: 10px;
 }
 
-#updateComplaintForm>div {
-    display: flex;
-    flex-direction: column;
-
-    gap: 7px;
-}
-
-#updateComplaintForm label {
-    font-size: 14px;
-    font-weight: 600;
-
-    color: #374151;
-}
-
-#updateComplaintForm select,
-#updateComplaintForm textarea {
-    padding: 10px 12px;
-
+.admin-update select {
+    padding: 10px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
-
-    font-size: 14px;
-
-    outline: none;
-
-    box-sizing: border-box;
+    border-radius: 7px;
 }
 
-#updateComplaintForm select:focus,
-#updateComplaintForm textarea:focus {
-    border-color: #2563eb;
-}
-
-#updateComplaintForm textarea {
-    resize: vertical;
-}
-
-#updateComplaintForm button[type="submit"] {
-    width: fit-content;
-
-    padding: 10px 18px;
-
+.admin-update button {
+    padding: 10px 15px;
     border: none;
-    border-radius: 6px;
-
-    background-color: #2563eb;
-    color: #ffffff;
-
+    border-radius: 7px;
+    background: #2563eb;
+    color: white;
     cursor: pointer;
-
-    font-size: 14px;
-    font-weight: 500;
 }
 
-#updateComplaintForm button[type="submit"]:hover {
-    background-color: #1d4ed8;
+.admin-update button:hover {
+    background: #1d4ed8;
 }
 
+/* =========================
+   MOBILE
+========================= */
 
-/* ========================================
-   FOOTER
-======================================== */
+@media (max-width: 900px) {
 
-footer {
-    padding: 25px 30px;
-
-    border-top: 1px solid #e5e7eb;
-
-    text-align: center;
-
-    color: #6b7280;
-
-    font-size: 13px;
-}
-
-
-/* ========================================
-   RESPONSIVE
-======================================== */
-
-@media (max-width: 1000px) {
-
-    .statistics-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .filter-group {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .filter-group>div:first-child {
-        grid-column: 1 / -1;
-    }
-}
-
-
-@media (max-width: 700px) {
-
-    .header-container {
-        height: auto;
-
-        padding: 18px 20px;
-
-        flex-direction: column;
-
-        gap: 15px;
+    .admin-sidebar {
+        width: 210px;
     }
 
     .admin-main {
-        padding: 25px 15px;
+        margin-left: 210px;
+        width: calc(100% - 210px);
+        padding: 20px;
     }
 
-    .statistics-container {
+    .admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+
+    .admin-dashboard {
+        display: block;
+    }
+
+    .admin-sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .admin-main {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+    }
+
+    .admin-stats {
         grid-template-columns: 1fr;
     }
 
-    .filter-group {
-        grid-template-columns: 1fr;
+    .admin-filter {
+        flex-direction: column;
     }
 
-    .filter-group>div:first-child {
-        grid-column: auto;
-    }
-
-    .complaints-section,
-    .complaint-details-section {
-        padding: 18px;
-    }
-
-    .section-header {
+    .admin-complaint-top {
+        flex-direction: column;
         align-items: flex-start;
-
-        gap: 15px;
+        gap: 10px;
     }
 }

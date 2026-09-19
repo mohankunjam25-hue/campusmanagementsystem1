@@ -1,619 +1,551 @@
-const API_URL = "http://localhost:5000/api/complaints";
+// ================================
+// CAMPUS CARE - ADMIN JS
+// ================================
 
-
-// Store all complaints
-let complaints = [];
-
-
-// DOM Elements
-const complaintsTableBody =
-    document.getElementById("complaintsTableBody");
-
-const totalComplaints =
-    document.getElementById("totalComplaints");
-
-const pendingComplaints =
-    document.getElementById("pendingComplaints");
-
-const inProgressComplaints =
-    document.getElementById("inProgressComplaints");
-
-const resolvedComplaints =
-    document.getElementById("resolvedComplaints");
-
-const searchComplaint =
-    document.getElementById("searchComplaint");
-
-const categoryFilter =
-    document.getElementById("categoryFilter");
-
-const statusFilter =
-    document.getElementById("statusFilter");
-
-const complaintDetailsSection =
-    document.getElementById("complaintDetailsSection");
-
-const complaintDetails =
-    document.getElementById("complaintDetails");
-
-const closeDetailsBtn =
-    document.getElementById("closeDetailsBtn");
-
-const updateComplaintForm =
-    document.getElementById("updateComplaintForm");
-
-const selectedComplaintId =
-    document.getElementById("selectedComplaintId");
-
-const updateStatus =
-    document.getElementById("updateStatus");
-
-const resolutionMessage =
-    document.getElementById("resolutionMessage");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
+// Admin login details
+const ADMIN_EMAIL = "admin@campuscare.com";
+const ADMIN_PASSWORD = "admin123";
 
 
 // ================================
-// Get All Complaints
+// ELEMENTS
 // ================================
 
-async function fetchComplaints() {
+const adminLogin = document.getElementById("adminLogin");
+const adminDashboard = document.getElementById("adminDashboard");
 
-    try {
+const adminLoginForm = document.getElementById("adminLoginForm");
+const adminEmail = document.getElementById("adminEmail");
+const adminPassword = document.getElementById("adminPassword");
 
-        complaintsTableBody.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    Loading complaints...
-                </td>
-            </tr>
-        `;
+const adminLogout = document.getElementById("adminLogout");
 
 
-        const response = await fetch(API_URL);
+// ================================
+// LOGIN
+// ================================
 
+adminLoginForm.addEventListener("submit", function (e) {
 
-        if (!response.ok) {
-            throw new Error("Failed to fetch complaints");
-        }
+    e.preventDefault();
 
+    const email = adminEmail.value.trim();
+    const password = adminPassword.value.trim();
 
-        const data = await response.json();
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
 
+        // Save admin login
+        sessionStorage.setItem("adminLoggedIn", "true");
 
-        complaints = data.complaints || [];
+        showAdminDashboard();
 
+    } else {
 
-        updateStatistics();
+        alert("Invalid admin email or password!");
 
-        renderComplaints(complaints);
-
-    } catch (error) {
-
-        console.error(error);
-
-        complaintsTableBody.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    Failed to load complaints.
-                </td>
-            </tr>
-        `;
     }
+
+});
+
+
+// ================================
+// SHOW DASHBOARD
+// ================================
+
+function showAdminDashboard() {
+
+    adminLogin.style.display = "none";
+    adminDashboard.style.display = "flex";
+
+    loadAdminData();
+
 }
 
 
 // ================================
-// Update Statistics
+// LOGOUT
 // ================================
 
-function updateStatistics() {
+adminLogout.addEventListener("click", function () {
+
+    sessionStorage.removeItem("adminLoggedIn");
+
+    adminDashboard.style.display = "none";
+    adminLogin.style.display = "flex";
+
+    adminLoginForm.reset();
+
+});
+
+
+// ================================
+// GET COMPLAINTS
+// ================================
+
+function getComplaints() {
+
+    return JSON.parse(
+        localStorage.getItem("campusComplaints")
+    ) || [];
+
+}
+
+
+// ================================
+// LOAD ADMIN DATA
+// ================================
+
+function loadAdminData() {
+
+    const complaints = getComplaints();
+
+    updateStats(complaints);
+
+    showRecentComplaints(complaints);
+
+    showAllComplaints(complaints);
+
+}
+
+
+// ================================
+// UPDATE STATS
+// ================================
+
+function updateStats(complaints) {
 
     const total = complaints.length;
-
 
     const pending = complaints.filter(
         complaint => complaint.status === "Pending"
     ).length;
 
-
-    const inProgress = complaints.filter(
+    const progress = complaints.filter(
         complaint => complaint.status === "In Progress"
     ).length;
-
 
     const resolved = complaints.filter(
         complaint => complaint.status === "Resolved"
     ).length;
 
 
-    totalComplaints.textContent = total;
+    document.getElementById("adminTotal").textContent = total;
 
-    pendingComplaints.textContent = pending;
+    document.getElementById("adminPending").textContent = pending;
 
-    inProgressComplaints.textContent = inProgress;
+    document.getElementById("adminProgress").textContent = progress;
 
-    resolvedComplaints.textContent = resolved;
+    document.getElementById("adminResolved").textContent = resolved;
+
 }
 
 
 // ================================
-// Render Complaints
+// RECENT COMPLAINTS
 // ================================
 
-function renderComplaints(complaintsToRender) {
+function showRecentComplaints(complaints) {
 
-    complaintsTableBody.innerHTML = "";
+    const container =
+        document.getElementById("adminRecentComplaints");
+
+    container.innerHTML = "";
 
 
-    if (complaintsToRender.length === 0) {
+    if (complaints.length === 0) {
 
-        complaintsTableBody.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    No complaints found.
-                </td>
-            </tr>
+        container.innerHTML = `
+            <div class="admin-complaint-card">
+                <h3>No Complaints Yet</h3>
+                <p>
+                    Students have not submitted any complaints.
+                </p>
+            </div>
         `;
 
         return;
     }
 
 
-    complaintsToRender.forEach(complaint => {
-
-        const row = document.createElement("tr");
-
-
-        const studentName =
-            complaint.reportedBy?.name || "Unknown";
+    // Latest 5 complaints
+    const recent = [...complaints]
+        .reverse()
+        .slice(0, 5);
 
 
-        const createdDate =
-            new Date(complaint.createdAt)
-                .toLocaleDateString();
+    recent.forEach(complaint => {
 
-
-        row.innerHTML = `
-
-            <td>
-                ${ escapeHTML(complaint.title) }
-            </td>
-
-            <td>
-                ${ escapeHTML(complaint.category) }
-            </td>
-
-            <td>
-                ${ escapeHTML(studentName) }
-            </td>
-
-            <td>
-                ${ escapeHTML(complaint.location) }
-            </td>
-
-            <td>
-                <span class="status status-${ getStatusClass(complaint.status) }">
-                    ${ escapeHTML(complaint.status) }
-                </span>
-            </td>
-
-            <td>
-                ${ createdDate }
-            </td>
-
-            <td>
-
-                <button
-                    type="button"
-                    class="view-btn"
-                    data-id="${ complaint._id }"
-                >
-                    View
-                </button>
-
-            </td>
-        `;
-
-
-        complaintsTableBody.appendChild(row);
+        container.innerHTML += createComplaintCard(
+            complaint,
+            false
+        );
 
     });
 
-
-    // Add event listeners to View buttons
-    const viewButtons =
-        document.querySelectorAll(".view-btn");
+}
 
 
-    viewButtons.forEach(button => {
+// ================================
+// ALL COMPLAINTS
+// ================================
 
-        button.addEventListener("click", () => {
+function showAllComplaints(complaints = getComplaints()) {
 
-            const complaintId =
-                button.dataset.id;
+    const container =
+        document.getElementById("adminComplaintList");
 
-            fetchComplaintDetails(complaintId);
+    container.innerHTML = "";
+
+
+    if (complaints.length === 0) {
+
+        container.innerHTML = `
+            <div class="admin-complaint-card">
+                <h3>No Complaints Found</h3>
+                <p>
+                    There are no complaints to display.
+                </p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    [...complaints]
+        .reverse()
+        .forEach(complaint => {
+
+            container.innerHTML += createComplaintCard(
+                complaint,
+                true
+            );
 
         });
 
-    });
 }
 
 
 // ================================
-// Get Complaint Details
+// COMPLAINT CARD
 // ================================
 
-async function fetchComplaintDetails(id) {
+function createComplaintCard(complaint, showUpdate) {
 
-    try {
+    let statusClass = "pending";
 
-        const response =
-            await fetch(`${ API_URL }/${ id }`);
-
-
-        if (!response.ok) {
-            throw new Error("Complaint not found");
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const complaint =
-            data.complaint;
-
-
-        showComplaintDetails(complaint);
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Failed to load complaint details.");
+    if (complaint.status === "In Progress") {
+        statusClass = "progress";
     }
-}
+
+    if (complaint.status === "Resolved") {
+        statusClass = "resolved";
+    }
 
 
-// ================================
-// Show Complaint Details
-// ================================
+    return `
+        <div class="admin-complaint-card">
 
-function showComplaintDetails(complaint) {
+            <div class="admin-complaint-top">
 
-    const studentName =
-        complaint.reportedBy?.name || "Unknown";
+                <div>
+
+                    <h3>
+                        ${escapeHTML(complaint.title)}
+                    </h3>
+
+                    <p>
+                        ${escapeHTML(complaint.description)}
+                    </p>
+
+                </div>
+
+                <span class="status ${statusClass}">
+                    ${complaint.status}
+                </span>
+
+            </div>
 
 
-    const studentEmail =
-        complaint.reportedBy?.email || "Not available";
+            <div class="complaint-info">
+
+                <span>
+                    👤 ${escapeHTML(complaint.name || "Unknown")}
+                </span>
+
+                <span>
+                    📂 ${escapeHTML(complaint.category)}
+                </span>
+
+                <span>
+                    📍 ${escapeHTML(complaint.location)}
+                </span>
+
+                <span>
+                    📅 ${escapeHTML(complaint.date || "")}
+                </span>
+
+            </div>
 
 
-    const createdDate =
-        new Date(complaint.createdAt)
-            .toLocaleString();
+            ${
+                showUpdate
+                ?
+                `
+                <div class="admin-update">
+
+                    <select
+                        class="status-select"
+                        data-id="${complaint.id}"
+                    >
+
+                        <option
+                            value="Pending"
+                            ${complaint.status === "Pending" ? "selected" : ""}
+                        >
+                            Pending
+                        </option>
+
+                        <option
+                            value="In Progress"
+                            ${complaint.status === "In Progress" ? "selected" : ""}
+                        >
+                            In Progress
+                        </option>
+
+                        <option
+                            value="Resolved"
+                            ${complaint.status === "Resolved" ? "selected" : ""}
+                        >
+                            Resolved
+                        </option>
+
+                    </select>
 
 
-    complaintDetails.innerHTML = `
+                    <button
+                        onclick="updateComplaint('${complaint.id}')"
+                    >
+                        Update Status
+                    </button>
 
-        <div>
-
-            <h3>
-                ${ escapeHTML(complaint.title) }
-            </h3>
-
-            <p>
-                <strong>Category:</strong>
-                ${ escapeHTML(complaint.category) }
-            </p>
-
-            <p>
-                <strong>Location:</strong>
-                ${ escapeHTML(complaint.location) }
-            </p>
-
-            <p>
-                <strong>Student:</strong>
-                ${ escapeHTML(studentName) }
-            </p>
-
-            <p>
-                <strong>Email:</strong>
-                ${ escapeHTML(studentEmail) }
-            </p>
-
-            <p>
-                <strong>Description:</strong>
-                ${ escapeHTML(complaint.description) }
-            </p>
-
-            <p>
-                <strong>Current Status:</strong>
-                ${ escapeHTML(complaint.status) }
-            </p>
-
-            <p>
-                <strong>Created At:</strong>
-                ${ createdDate }
-            </p>
-
-            ${ complaint.resolutionMessage
-            ? `
-                        <p>
-                            <strong>Resolution:</strong>
-                            ${ escapeHTML(
-                complaint.resolutionMessage
-            ) }
-                        </p>
-                    `
-            : ""
-        }
+                </div>
+                `
+                :
+                ""
+            }
 
         </div>
     `;
-
-
-    // Set current complaint ID
-    selectedComplaintId.value =
-        complaint._id;
-
-
-    // Set current status
-    updateStatus.value =
-        complaint.status;
-
-
-    // Set resolution message
-    resolutionMessage.value =
-        complaint.resolutionMessage || "";
-
-
-    // Show details section
-    complaintDetailsSection.hidden = false;
-
-
-    // Scroll to details
-    complaintDetailsSection.scrollIntoView({
-        behavior: "smooth"
-    });
 }
 
 
 // ================================
-// Update Complaint
+// UPDATE STATUS
 // ================================
 
-updateComplaintForm.addEventListener(
-    "submit",
-    async (event) => {
+function updateComplaint(id) {
 
-        event.preventDefault();
+    const complaints = getComplaints();
 
-
-        const complaintId =
-            selectedComplaintId.value;
-
-
-        const status =
-            updateStatus.value;
+    const select =
+        document.querySelector(
+            `.status-select[data-id="${id}"]`
+        );
 
 
-        const message =
-            resolutionMessage.value.trim();
+    if (!select) {
+        return;
+    }
 
 
-        try {
-
-            const response = await fetch(
-                `${ API_URL }/${ complaintId }`,
-                {
-                    method: "PUT",
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        status: status,
-                        resolutionMessage: message
-                    })
-                }
-            );
+    const newStatus = select.value;
 
 
-            const data =
-                await response.json();
+    const complaintIndex = complaints.findIndex(
+        complaint => String(complaint.id) === String(id)
+    );
 
 
-            if (!response.ok) {
-                throw new Error(
-                    data.message ||
-                    "Failed to update complaint"
-                );
-            }
+    if (complaintIndex === -1) {
+        alert("Complaint not found!");
+        return;
+    }
 
 
-            alert(
-                "Complaint updated successfully."
-            );
+    complaints[complaintIndex].status = newStatus;
 
 
-            // Reload complaints
-            await fetchComplaints();
+    localStorage.setItem(
+        "campusComplaints",
+        JSON.stringify(complaints)
+    );
 
 
-            // Reload updated details
-            await fetchComplaintDetails(
-                complaintId
-            );
+    alert("Complaint status updated!");
 
-        } catch (error) {
 
-            console.error(error);
+    loadAdminData();
 
-            alert(error.message);
+}
+
+
+// ================================
+// NAVIGATION
+// ================================
+
+const navLinks =
+    document.querySelectorAll(".admin-nav a");
+
+
+navLinks.forEach(link => {
+
+    link.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+
+        navLinks.forEach(item => {
+            item.classList.remove("active");
+        });
+
+
+        this.classList.add("active");
+
+
+        const sectionId =
+            this.getAttribute("data-section");
+
+
+        document.querySelectorAll(
+            ".admin-main section"
+        ).forEach(section => {
+
+            section.style.display = "none";
+
+        });
+
+
+        const section =
+            document.getElementById(sectionId);
+
+
+        if (section) {
+            section.style.display = "block";
         }
 
-    }
-);
+
+        if (sectionId === "allComplaints") {
+
+            showAllComplaints(
+                getComplaints()
+            );
+
+        }
+
+    });
+
+});
 
 
 // ================================
-// Search + Filter
+// SEARCH
 // ================================
 
-function applyFilters() {
+const adminSearch =
+    document.getElementById("adminSearch");
 
-    const searchValue =
-        searchComplaint.value
-            .toLowerCase()
-            .trim();
+const adminStatus =
+    document.getElementById("adminStatus");
 
-
-    const categoryValue =
-        categoryFilter.value;
+const adminCategory =
+    document.getElementById("adminCategory");
 
 
-    const statusValue =
-        statusFilter.value;
+function filterComplaints() {
+
+    const complaints = getComplaints();
 
 
-    const filteredComplaints =
-        complaints.filter(complaint => {
+    const search =
+        adminSearch.value.toLowerCase().trim();
 
-            const studentName =
-                complaint.reportedBy?.name || "";
 
+    const status =
+        adminStatus.value;
+
+
+    const category =
+        adminCategory.value;
+
+
+    const filtered = complaints.filter(
+        complaint => {
 
             const matchesSearch =
                 complaint.title
                     .toLowerCase()
-                    .includes(searchValue)
+                    .includes(search) ||
 
-                ||
-
-                complaint.location
+                complaint.description
                     .toLowerCase()
-                    .includes(searchValue)
+                    .includes(search) ||
 
-                ||
-
-                studentName
+                complaint.name
                     .toLowerCase()
-                    .includes(searchValue);
-
-
-            const matchesCategory =
-                !categoryValue ||
-                complaint.category === categoryValue;
+                    .includes(search);
 
 
             const matchesStatus =
-                !statusValue ||
-                complaint.status === statusValue;
+                status === "all" ||
+                complaint.status === status;
+
+
+            const matchesCategory =
+                category === "all" ||
+                complaint.category === category;
 
 
             return (
                 matchesSearch &&
-                matchesCategory &&
-                matchesStatus
+                matchesStatus &&
+                matchesCategory
             );
 
-        });
+        }
+    );
 
 
-    renderComplaints(filteredComplaints);
+    showAllComplaints(filtered);
+
 }
 
 
-// Search
-searchComplaint.addEventListener(
+adminSearch.addEventListener(
     "input",
-    applyFilters
+    filterComplaints
 );
 
-
-// Category filter
-categoryFilter.addEventListener(
+adminStatus.addEventListener(
     "change",
-    applyFilters
+    filterComplaints
 );
 
-
-// Status filter
-statusFilter.addEventListener(
+adminCategory.addEventListener(
     "change",
-    applyFilters
+    filterComplaints
 );
 
 
 // ================================
-// Close Complaint Details
-// ================================
-
-closeDetailsBtn.addEventListener(
-    "click",
-    () => {
-
-        complaintDetailsSection.hidden = true;
-
-    }
-);
-
-
-// ================================
-// Logout
-// ================================
-
-logoutBtn.addEventListener(
-    "click",
-    () => {
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-
-        window.location.href =
-            "../login.html";
-    }
-);
-
-
-// ================================
-// Status CSS Class
-// ================================
-
-function getStatusClass(status) {
-
-    if (status === "Pending") {
-        return "pending";
-    }
-
-    if (status === "In Progress") {
-        return "progress";
-    }
-
-    if (status === "Resolved") {
-        return "resolved";
-    }
-
-    return "unknown";
-}
-
-
-// ================================
-// Basic HTML Escape
+// HTML SECURITY
 // ================================
 
 function escapeHTML(value) {
 
-    if (value === null || value === undefined) {
+    if (!value) {
         return "";
     }
-
 
     return String(value)
         .replace(/&/g, "&amp;")
@@ -625,7 +557,9 @@ function escapeHTML(value) {
 
 
 // ================================
-// Initial Load
+// ADMIN LOGIN CHECK
 // ================================
 
-fetchComplaints();
+
+adminDashboard.style.display = "none";
+adminLogin.style.display = "flex";

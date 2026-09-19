@@ -4,172 +4,373 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard - Campus Complaint System</title>
+    <title>Admin Dashboard - Campus Care</title>
 
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./admin.css">
+    <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
 
-    <!-- Header -->
-    <header class="admin-header">
+    <!-- =========================
+         ADMIN LOGIN
+    ========================== -->
 
-        <div class="header-container">
+    <div class="admin-login-page" id="adminLogin">
 
-            <div class="logo">
-                <h1>Campus Complaint System</h1>
+        <div class="admin-login-card">
+
+            <div class="admin-logo">
+                <div class="icon">🛡️</div>
+
+                <h1>Admin Login</h1>
+
+                <p>Campus Care Management System</p>
             </div>
 
-            <nav aria-label="Main Navigation">
-                <ul>
-                    <li>
-                        <a href="dashboard.html">Dashboard</a>
-                    </li>
+            <form id="adminLoginForm">
 
-                    <li>
-                        <a href="complaints.html">Complaints</a>
-                    </li>
-                </ul>
-            </nav>
+                <div class="admin-form-group">
+                    <label for="adminEmail">
+                        Admin Email
+                    </label>
 
-            <div class="admin-account">
-                <span id="adminName">Admin</span>
+                    <input
+                        type="email"
+                        id="adminEmail"
+                        placeholder="Enter admin email"
+                        required
+                    >
+                </div>
 
-                <button type="button" id="logoutBtn">
-                    Logout
+                <div class="admin-form-group">
+                    <label for="adminPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="adminPassword"
+                        placeholder="Enter password"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="admin-login-btn"
+                >
+                    Login as Admin
                 </button>
-            </div>
+
+            </form>
+
+            <a href="index.html" class="student-link">
+                ← Go to Student Login
+            </a>
 
         </div>
 
-    </header>
+    </div>
 
 
-    <!-- Main -->
-    <main class="admin-main">
+    <!-- =========================
+         ADMIN DASHBOARD
+    ========================== -->
 
-        <!-- Dashboard Heading -->
-        <section class="dashboard-header">
+    <div
+        class="admin-dashboard"
+        id="adminDashboard"
+        style="display: none;"
+    >
 
-            <div>
-                <h2>Admin Dashboard</h2>
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
 
-                <p>
-                    Manage and track campus complaints.
-                </p>
-            </div>
+        <aside class="admin-sidebar">
 
-        </section>
+            <div class="admin-brand">
 
+                <h2>🏫 Campus Care</h2>
 
-        <!-- Complaint Statistics -->
-        <section
-            class="complaint-statistics"
-            aria-labelledby="statisticsHeading"
-        >
-
-            <h2 id="statisticsHeading">
-                Complaint Statistics
-            </h2>
-
-            <div class="statistics-container">
-
-                <article class="stat-card">
-
-                    <h3>Total Complaints</h3>
-
-                    <p id="totalComplaints">
-                        0
-                    </p>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <h3>Pending</h3>
-
-                    <p id="pendingComplaints">
-                        0
-                    </p>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <h3>In Progress</h3>
-
-                    <p id="inProgressComplaints">
-                        0
-                    </p>
-
-                </article>
-
-
-                <article class="stat-card">
-
-                    <h3>Resolved</h3>
-
-                    <p id="resolvedComplaints">
-                        0
-                    </p>
-
-                </article>
+                <p>Admin Panel</p>
 
             </div>
 
-        </section>
 
+            <!-- Admin Profile -->
 
-        <!-- Complaints Section -->
-        <section
-            class="complaints-section"
-            aria-labelledby="complaintsHeading"
-        >
+            <div class="admin-profile">
 
-            <div class="section-header">
+                <div class="admin-avatar">
+                    A
+                </div>
 
                 <div>
-                    <h2 id="complaintsHeading">
-                        Complaints
-                    </h2>
-
-                    <p>
-                        View and manage student complaints.
-                    </p>
+                    <strong>Administrator</strong>
+                    <span>Campus Admin</span>
                 </div>
 
             </div>
 
 
-            <!-- Filters -->
-            <form id="complaintFilterForm">
+            <!-- Navigation -->
 
-                <div class="filter-group">
+            <nav class="admin-nav">
+
+                <a
+                    href="#"
+                    class="active"
+                    data-section="adminOverview"
+                >
+                    📊 Dashboard
+                </a>
+
+                <a
+                    href="#"
+                    data-section="allComplaints"
+                >
+                    📋 All Complaints
+                </a>
+
+            </nav>
+
+
+            <!-- Logout -->
+
+            <div class="admin-logout">
+
+                <button id="adminLogout">
+                    🚪 Logout
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <main class="admin-main">
+
+
+            <!-- =========================
+                 DASHBOARD SECTION
+            ========================== -->
+
+            <section id="adminOverview">
+
+                <div class="admin-header">
 
                     <div>
-                        <label for="searchComplaint">
-                            Search
-                        </label>
 
-                        <input
-                            type="search"
-                            id="searchComplaint"
-                            placeholder="Search by title, student or location"
+                        <h1>Admin Dashboard</h1>
+
+                        <p>
+                            Manage and monitor campus complaints
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     STAT CARDS
+                ========================== -->
+
+                <div class="admin-stats">
+
+                    <!-- Total -->
+
+                    <div class="admin-stat-card">
+
+                        <div class="admin-stat-top">
+
+                            <h3>Total Complaints</h3>
+
+                            <div class="stat-icon">
+                                📋
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="number"
+                            id="adminTotal"
                         >
+                            0
+                        </div>
+
                     </div>
 
 
+                    <!-- Pending -->
+
+                    <div class="admin-stat-card">
+
+                        <div class="admin-stat-top">
+
+                            <h3>Pending</h3>
+
+                            <div class="stat-icon">
+                                ⏳
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="number"
+                            id="adminPending"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- In Progress -->
+
+                    <div class="admin-stat-card">
+
+                        <div class="admin-stat-top">
+
+                            <h3>In Progress</h3>
+
+                            <div class="stat-icon">
+                                🔄
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="number"
+                            id="adminProgress"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- Resolved -->
+
+                    <div class="admin-stat-card">
+
+                        <div class="admin-stat-top">
+
+                            <h3>Resolved</h3>
+
+                            <div class="stat-icon">
+                                ✅
+                            </div>
+
+                        </div>
+
+                        <div
+                            class="number"
+                            id="adminResolved"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================
+                     RECENT COMPLAINTS
+                ========================== -->
+
+                <div class="admin-section">
+
+                    <div class="admin-section-header">
+
+                        <h2>Recent Complaints</h2>
+
+                        <p>
+                            Latest complaints submitted by students
+                        </p>
+
+                    </div>
+
+                    <div
+                        class="admin-complaint-list"
+                        id="adminRecentComplaints"
+                    >
+
+                        <!-- JavaScript will add complaints here -->
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================
+                 ALL COMPLAINTS SECTION
+            ========================== -->
+
+            <section
+                id="allComplaints"
+                style="display: none;"
+            >
+
+                <div class="admin-header">
+
                     <div>
-                        <label for="categoryFilter">
-                            Category
-                        </label>
 
-                        <select id="categoryFilter">
+                        <h1>All Complaints</h1>
 
-                            <option value="">
+                        <p>
+                            View and manage all student complaints
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-section">
+
+                    <!-- Filters -->
+
+                    <div class="admin-filter">
+
+                        <input
+                            type="text"
+                            id="adminSearch"
+                            placeholder="🔍 Search complaints..."
+                        >
+
+                        <select id="adminStatus">
+
+                            <option value="all">
+                                All Status
+                            </option>
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Resolved">
+                                Resolved
+                            </option>
+
+                        </select>
+
+
+                        <select id="adminCategory">
+
+                            <option value="all">
                                 All Categories
                             </option>
 
@@ -206,207 +407,35 @@
                             </option>
 
                         </select>
+
                     </div>
 
 
-                    <div>
-                        <label for="statusFilter">
-                            Status
-                        </label>
+                    <!-- Complaint List -->
 
-                        <select id="statusFilter">
+                    <div
+                        class="admin-complaint-list"
+                        id="adminComplaintList"
+                    >
 
-                            <option value="">
-                                All Status
-                            </option>
+                        <!-- Complaints will come from JavaScript -->
 
-                            <option value="Pending">
-                                Pending
-                            </option>
-
-                            <option value="In Progress">
-                                In Progress
-                            </option>
-
-                            <option value="Resolved">
-                                Resolved
-                            </option>
-
-                        </select>
                     </div>
 
                 </div>
 
-            </form>
+            </section>
+
+        </main>
+
+    </div>
 
 
-            <!-- Complaints Table -->
-            <div class="table-container">
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
 
-                <table class="complaints-table">
-
-                    <caption>
-                        List of campus complaints
-                    </caption>
-
-                    <thead>
-
-                        <tr>
-
-                            <th scope="col">
-                                Complaint
-                            </th>
-
-                            <th scope="col">
-                                Category
-                            </th>
-
-                            <th scope="col">
-                                Student
-                            </th>
-
-                            <th scope="col">
-                                Location
-                            </th>
-
-                            <th scope="col">
-                                Status
-                            </th>
-
-                            <th scope="col">
-                                Date
-                            </th>
-
-                            <th scope="col">
-                                Action
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody id="complaintsTableBody">
-
-                        <tr>
-
-                            <td colspan="7">
-                                Loading complaints...
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-
-        <!-- Complaint Details -->
-        <section
-            id="complaintDetailsSection"
-            class="complaint-details-section"
-            hidden
-            aria-labelledby="detailsHeading"
-        >
-
-            <div class="section-header">
-
-                <h2 id="detailsHeading">
-                    Complaint Details
-                </h2>
-
-                <button
-                    type="button"
-                    id="closeDetailsBtn"
-                >
-                    Close
-                </button>
-
-            </div>
-
-
-            <article id="complaintDetails">
-
-                <!-- JavaScript will insert complaint details here -->
-
-            </article>
-
-
-            <!-- Update Complaint -->
-            <form id="updateComplaintForm">
-
-                <input
-                    type="hidden"
-                    id="selectedComplaintId"
-                >
-
-
-                <div>
-
-                    <label for="updateStatus">
-                        Status
-                    </label>
-
-                    <select id="updateStatus" required>
-
-                        <option value="Pending">
-                            Pending
-                        </option>
-
-                        <option value="In Progress">
-                            In Progress
-                        </option>
-
-                        <option value="Resolved">
-                            Resolved
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div>
-
-                    <label for="resolutionMessage">
-                        Resolution Message
-                    </label>
-
-                    <textarea
-                        id="resolutionMessage"
-                        rows="5"
-                        placeholder="Add resolution message"
-                    ></textarea>
-
-                </div>
-
-
-                <button type="submit">
-                    Update Complaint
-                </button>
-
-            </form>
-
-        </section>
-
-    </main>
-
-
-    <!-- Footer -->
-    <footer>
-
-        <p>
-            Campus Complaint Management System
-        </p>
-
-    </footer>
-
-
-    <script src="../js/admin.js"></script>
+    <script src="admin.js"></script>
 
 </body>
 </html>

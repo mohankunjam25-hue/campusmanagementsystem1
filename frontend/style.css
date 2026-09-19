@@ -9,20 +9,9 @@ html {
 }
 
 body {
-<<<<<<< HEAD
     font-family: Arial, sans-serif;
     background: #f4f6f9;
     color: #1f2937;
-=======
-    min-height: 100vh;
-    background-color: #f8fafc;
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    color: #111827;
->>>>>>> 5829f4f9eafb0ff836436a9a58a169aeb8c35f06
 }
 
 button,
