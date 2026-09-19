@@ -9,21 +9,16 @@ const {
     updateComplaint
 } = require("../controller/complaintController");
 
-
 // Create complaint
 router.post("/", createComplaint);
-
 
 // Get all complaints
 router.get("/", getComplaints);
 
-
 // Get single complaint
 router.get("/:id", getComplaintById);
 
-
 // Update complaint
 router.put("/:id", updateComplaint);
-
 
 module.exports = router;

@@ -11,6 +11,12 @@ const createComplaint = async (req, res) => {
             reportedBy
         } = req.body;
 
+        if (!title || !description || !category || !location || !reportedBy) {
+            return res.status(400).json({
+                message: "All fields are required"
+            });
+        }
+
         const complaint = await Complaint.create({
             title,
             description,
@@ -25,6 +31,8 @@ const createComplaint = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             message: "Failed to create complaint",
             error: error.message
@@ -45,6 +53,8 @@ const getComplaints = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             message: "Failed to fetch complaints",
             error: error.message
@@ -70,6 +80,8 @@ const getComplaintById = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             message: "Failed to fetch complaint",
             error: error.message
@@ -110,6 +122,8 @@ const updateComplaint = async (req, res) => {
         });
 
     } catch (error) {
+        console.log(error);
+
         res.status(500).json({
             message: "Failed to update complaint",
             error: error.message
