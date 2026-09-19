@@ -1,155 +1,290 @@
-<<<<<<< HEAD
-=======
-// ================= DATA =================
 
-let currentUser =
-    JSON.parse(localStorage.getItem("campusUser"));
+let currentUser = JSON.parse(localStorage.getItem("campusUser"));
 
-let complaints =
-    JSON.parse(localStorage.getItem("campusComplaints")) || [];
+const API_URL = "http://localhost:5000/api";
 
 
 // ================= LOGIN =================
 
-document.getElementById("loginForm").addEventListener("submit", function(e) {
+const loginForm = document.getElementById("loginForm");
 
-    e.preventDefault();
+if (loginForm) {
+    loginForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
 
-    if (email === "" || password === "") {
-        alert("Please enter email and password");
-        return;
-    }
+        if (!email || !password) {
+            alert("Please enter email and password");
+            return;
+        }
 
-    currentUser = {
-        name: email.split("@")[0],
-        email: email,
-        role: "student"
-    };
+        try {
+            const response = await fetch(`${API_URL}/users/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
 
-    localStorage.setItem(
-        "campusUser",
-        JSON.stringify(currentUser)
-    );
+            const data = await response.json();
 
-    showDashboard();
-});
+            console.log("Login response:", data);
+
+            if (!response.ok) {
+                alert(data.message || "Login failed");
+                return;
+            }
+
+            currentUser = data.user;
+
+            localStorage.setItem(
+                "campusUser",
+                JSON.stringify(data.user)
+            );
+
+            alert("Login successful!");
+
+            showDashboard(currentUser);
+
+        } catch (error) {
+            console.error("Login Error:", error);
+
+            alert(
+                "Server connection failed. Make sure backend is running on port 5000."
+            );
+        }
+    });
+}
 
 
-// ================= STUDENT DEMO =================
+// ================= REGISTER =================
 
-document.getElementById("studentDemo").onclick = function() {
+const registerForm = document.getElementById("registerForm");
 
-    currentUser = {
-        name: "Vikky",
-        email: "vikky@student.com",
-        role: "student"
-    };
+if (registerForm) {
+    registerForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-    localStorage.setItem(
-        "campusUser",
-        JSON.stringify(currentUser)
-    );
+        const name = document
+            .getElementById("registerName")
+            .value
+            .trim();
 
-    showDashboard();
-};
+        const email = document
+            .getElementById("registerEmail")
+            .value
+            .trim();
 
+        const password = document
+            .getElementById("registerPassword")
+            .value
+            .trim();
 
-// ================= ADMIN PAGE =================
+        if (!name || !email || !password) {
+            alert("Please fill all fields");
+            return;
+        }
 
-document.getElementById("adminDemo").onclick = function() {
+        try {
+            const response = await fetch(`${API_URL}/users/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password
+                })
+            });
 
-    window.location.href = "admin.html";
+            const data = await response.json();
 
-};
+            console.log("Register response:", data);
+
+            if (!response.ok) {
+                alert(data.message || "Registration failed");
+                return;
+            }
+
+            alert("Registration successful! Please login.");
+
+            registerForm.reset();
+
+            showLogin();
+
+        } catch (error) {
+            console.error("Register Error:", error);
+
+            alert(
+                "Server connection failed. Make sure backend is running."
+            );
+        }
+    });
+}
 
 
 // ================= SHOW DASHBOARD =================
 
-function showDashboard() {
+function showDashboard(user) {
+    if (!user) {
+        return;
+    }
 
-    document.getElementById("loginPage")
-        .classList.add("hidden");
+    document
+        .getElementById("loginPage")
+        .classList
+        .add("hidden");
 
-    document.getElementById("dashboardPage")
-        .classList.remove("hidden");
+    document
+        .getElementById("registerPage")
+        .classList
+        .add("hidden");
 
-    document.getElementById("welcomeName")
-        .textContent = currentUser.name;
+    document
+        .getElementById("dashboardPage")
+        .classList
+        .remove("hidden");
 
-    document.getElementById("sidebarName")
-        .textContent = currentUser.name;
+    document.getElementById("welcomeName").textContent = user.name;
 
-    document.getElementById("sidebarEmail")
-        .textContent = currentUser.email;
+    document.getElementById("sidebarName").textContent = user.name;
 
-    document.getElementById("complaintName")
-        .value = currentUser.name;
+    document.getElementById("sidebarEmail").textContent = user.email;
 
-    let letter =
-        currentUser.name.charAt(0).toUpperCase();
+    const avatar = user.name.charAt(0).toUpperCase();
 
-    document.getElementById("sidebarAvatar")
-        .textContent = letter;
+    document.getElementById("sidebarAvatar").textContent = avatar;
 
-    document.getElementById("topAvatar")
-        .textContent = letter;
+    document.getElementById("topAvatar").textContent = avatar;
+
+    document.getElementById("complaintName").value = user.name;
 
     loadComplaints();
 }
 
 
+// ================= SHOW LOGIN =================
+
+function showLogin() {
+    document
+        .getElementById("registerPage")
+        .classList
+        .add("hidden");
+
+    document
+        .getElementById("dashboardPage")
+        .classList
+        .add("hidden");
+
+    document
+        .getElementById("loginPage")
+        .classList
+        .remove("hidden");
+}
+
+
+// ================= REGISTER PAGE =================
+
+const registerBtn = document.getElementById("registerBtn");
+
+if (registerBtn) {
+    registerBtn.addEventListener("click", function () {
+        document
+            .getElementById("loginPage")
+            .classList
+            .add("hidden");
+
+        document
+            .getElementById("registerPage")
+            .classList
+            .remove("hidden");
+    });
+}
+
+
+// ================= ADMIN LOGIN =================
+
+const adminLoginBtn = document.getElementById("adminLoginBtn");
+
+if (adminLoginBtn) {
+    adminLoginBtn.addEventListener("click", function () {
+        window.location.href = "admin.html";
+    });
+}
+
+
 // ================= LOGOUT =================
 
-document.getElementById("logoutBtn").onclick = function() {
+const logoutBtn = document.getElementById("logoutBtn");
 
-    localStorage.removeItem("campusUser");
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+        localStorage.removeItem("campusUser");
 
-    location.reload();
+        currentUser = null;
 
-};
+        document
+            .getElementById("dashboardPage")
+            .classList
+            .add("hidden");
+
+        document
+            .getElementById("loginPage")
+            .classList
+            .remove("hidden");
+    });
+}
 
 
 // ================= NAVIGATION =================
 
 function navigateTo(page) {
+    document
+        .getElementById("overviewSection")
+        .classList
+        .add("hidden");
 
-    document.getElementById("overviewSection")
-        .classList.add("hidden");
+    document
+        .getElementById("complaintsSection")
+        .classList
+        .add("hidden");
 
-    document.getElementById("complaintsSection")
-        .classList.add("hidden");
+    document
+        .getElementById("newComplaintSection")
+        .classList
+        .add("hidden");
 
-    document.getElementById("newComplaintSection")
-        .classList.add("hidden");
+    const selectedSection =
+        document.getElementById(page + "Section");
 
-    document.getElementById(page + "Section")
-        .classList.remove("hidden");
+    if (selectedSection) {
+        selectedSection.classList.remove("hidden");
+    }
 
-    let titles = {
-
+    const titles = {
         overview: "Overview",
-
         complaints: "My Complaints",
-
         newComplaint: "New Complaint"
-
     };
 
-    document.getElementById("pageTitle")
-        .textContent = titles[page];
+    document.getElementById("pageTitle").textContent =
+        titles[page] || "Dashboard";
 
-    document.querySelectorAll(".nav-link")
-        .forEach(function(link) {
-
+    document
+        .querySelectorAll(".nav-link")
+        .forEach(function (link) {
             link.classList.remove("active");
-
         });
 
-    let activeLink = document.querySelector(
-        '[data-section="' + page + '"]'
+    const activeLink = document.querySelector(
+        `[data-section="${page}"]`
     );
 
     if (activeLink) {
@@ -160,33 +295,14 @@ function navigateTo(page) {
 
 // ================= NAV LINKS =================
 
-document.querySelectorAll(".nav-link")
-    .forEach(function(link) {
+document
+    .querySelectorAll(".nav-link")
+    .forEach(function (link) {
 
-        link.onclick = function(e) {
-
+        link.onclick = function (e) {
             e.preventDefault();
 
-            navigateTo(
-                link.dataset.section
-            );
-
-        };
-
-    });
-
-
-// ================= OTHER BUTTONS =================
-
-document.querySelectorAll("[data-go]")
-    .forEach(function(button) {
-
-        button.onclick = function() {
-
-            navigateTo(
-                button.dataset.go
-            );
-
+            navigateTo(link.dataset.section);
         };
 
     });
@@ -194,130 +310,189 @@ document.querySelectorAll("[data-go]")
 
 // ================= SUBMIT COMPLAINT =================
 
-document.getElementById("complaintForm")
-    .addEventListener("submit", function(e) {
+const complaintForm = document.getElementById("complaintForm");
+
+if (complaintForm) {
+
+    complaintForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
 
-        let complaint = {
+        if (!currentUser) {
+            alert("Please login first.");
+            return;
+        }
 
-            id: Date.now(),
+        const title = document
+            .getElementById("complaintTitle")
+            .value
+            .trim();
 
-            name: currentUser.name,
+        const description = document
+            .getElementById("complaintDescription")
+            .value
+            .trim();
 
-            email: currentUser.email,
+        const category = document
+            .getElementById("complaintCategory")
+            .value;
 
-            title:
-                document.getElementById(
-                    "complaintTitle"
-                ).value,
+        const location = document
+            .getElementById("complaintLocation")
+            .value
+            .trim();
 
-            category:
-                document.getElementById(
-                    "complaintCategory"
-                ).value,
+        if (!title || !description || !category || !location) {
+            alert("Please fill all complaint fields");
+            return;
+        }
 
-            location:
-                document.getElementById(
-                    "complaintLocation"
-                ).value,
+        try {
 
-            description:
-                document.getElementById(
-                    "complaintDescription"
-                ).value,
+            const response = await fetch(`${API_URL}/complaints`, {
+                method: "POST",
 
-            status: "Pending",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-            date: new Date().toLocaleDateString()
+                body: JSON.stringify({
+                    title: title,
+                    description: description,
+                    category: category,
+                    location: location,
+                    reportedBy: currentUser.id
+                })
+            });
 
-        };
+            const data = await response.json();
 
-        complaints.unshift(complaint);
+            console.log("Complaint response:", data);
 
-        localStorage.setItem(
-            "campusComplaints",
-            JSON.stringify(complaints)
-        );
+            if (!response.ok) {
+                alert(data.message || "Complaint submission failed");
+                return;
+            }
 
-        this.reset();
+            alert("Complaint submitted successfully!");
 
-        document.getElementById(
-            "complaintName"
-        ).value = currentUser.name;
+            complaintForm.reset();
 
-        document.getElementById(
-            "charCount"
-        ).textContent = "0";
+            document.getElementById("complaintName").value =
+                currentUser.name;
 
-        alert("Complaint submitted successfully!");
+            document.getElementById("charCount").textContent = "0";
 
-        loadComplaints();
+            await loadComplaints();
 
-        navigateTo("overview");
+            navigateTo("overview");
+
+        } catch (error) {
+
+            console.error("Complaint Error:", error);
+
+            alert(
+                "Server connection failed. Make sure backend is running."
+            );
+        }
 
     });
+}
 
 
 // ================= LOAD COMPLAINTS =================
 
-function loadComplaints() {
+async function loadComplaints() {
 
-    let userComplaints =
-        complaints.filter(function(complaint) {
+    if (!currentUser) {
+        return;
+    }
 
-            return complaint.email ===
-                currentUser.email;
+    try {
 
-        });
+        const response = await fetch(
+            `${API_URL}/complaints`
+        );
 
+        const data = await response.json();
 
-    document.getElementById(
-        "totalComplaints"
-    ).textContent =
-        userComplaints.length;
+        if (!response.ok) {
+            console.log(data);
+            return;
+        }
 
+        const allComplaints = data.complaints || [];
 
-    document.getElementById(
-        "pendingComplaints"
-    ).textContent =
-        userComplaints.filter(function(c) {
+        const userComplaints = allComplaints.filter(
+            function (complaint) {
 
-            return c.status === "Pending";
+                if (!complaint.reportedBy) {
+                    return false;
+                }
 
-        }).length;
-
-
-    document.getElementById(
-        "progressComplaints"
-    ).textContent =
-        userComplaints.filter(function(c) {
-
-            return c.status === "In Progress";
-
-        }).length;
-
-
-    document.getElementById(
-        "resolvedComplaints"
-    ).textContent =
-        userComplaints.filter(function(c) {
-
-            return c.status === "Resolved";
-
-        }).length;
+                return (
+                    complaint.reportedBy._id === currentUser.id ||
+                    complaint.reportedBy === currentUser.id
+                );
+            }
+        );
 
 
-    document.getElementById(
-        "recentComplaints"
-    ).innerHTML =
-        userComplaints
-            .slice(0, 5)
-            .map(complaintCard)
-            .join("");
+        // Statistics
+
+        document.getElementById("totalComplaints").textContent =
+            userComplaints.length;
+
+        document.getElementById("pendingComplaints").textContent =
+            userComplaints.filter(
+                c => c.status === "Pending"
+            ).length;
+
+        document.getElementById("progressComplaints").textContent =
+            userComplaints.filter(
+                c => c.status === "In Progress"
+            ).length;
+
+        document.getElementById("resolvedComplaints").textContent =
+            userComplaints.filter(
+                c => c.status === "Resolved"
+            ).length;
 
 
-    filterComplaints(userComplaints);
+        // Recent complaints
+
+        const recentComplaints =
+            document.getElementById("recentComplaints");
+
+        if (userComplaints.length === 0) {
+
+            recentComplaints.innerHTML = `
+                <div class="empty-state">
+                    <h3>No complaints yet</h3>
+                    <p>Create your first complaint.</p>
+                </div>
+            `;
+
+        } else {
+
+            recentComplaints.innerHTML =
+                userComplaints
+                    .slice(0, 5)
+                    .map(complaintCard)
+                    .join("");
+        }
+
+
+        filterComplaints(userComplaints);
+
+    } catch (error) {
+
+        console.error(
+            "Load Complaints Error:",
+            error
+        );
+
+    }
 }
 
 
@@ -325,55 +500,75 @@ function loadComplaints() {
 
 function filterComplaints(data) {
 
-    let search =
-        document.getElementById(
-            "searchComplaint"
-        ).value.toLowerCase();
+    const searchInput =
+        document.getElementById("searchComplaint");
 
-    let status =
-        document.getElementById(
-            "statusFilter"
-        ).value;
+    const statusInput =
+        document.getElementById("statusFilter");
 
-    let category =
-        document.getElementById(
-            "categoryFilter"
-        ).value;
+    const categoryInput =
+        document.getElementById("categoryFilter");
 
+    if (!searchInput || !statusInput || !categoryInput) {
+        return;
+    }
 
-    let result = data.filter(function(c) {
+    const search =
+        searchInput.value.toLowerCase();
 
-        return (
+    const status =
+        statusInput.value;
 
-            c.title
-                .toLowerCase()
-                .includes(search)
-
-            &&
-
-            (
-                status === "all" ||
-                c.status === status
-            )
-
-            &&
-
-            (
-                category === "all" ||
-                c.category === category
-            )
-
-        );
-
-    });
+    const category =
+        categoryInput.value;
 
 
-    document.getElementById(
-        "complaintsList"
-    ).innerHTML =
-        result
-            .map(complaintCard)
-            .join("");
+    const result = data.filter(
+        function (c) {
+
+            return (
+                c.title
+                    .toLowerCase()
+                    .includes(search)
+
+                &&
+
+                (
+                    status === "all" ||
+                    c.status === status
+                )
+
+                &&
+
+                (
+                    category === "all" ||
+                    c.category === category
+                )
+            );
+
+        }
+    );
+
+
+    const complaintsList =
+        document.getElementById("complaintsList");
+
+    if (result.length === 0) {
+
+        complaintsList.innerHTML = `
+            <div class="empty-state">
+                <h3>No complaints found</h3>
+                <p>Your complaints will appear here.</p>
+            </div>
+        `;
+
+    } else {
+
+        complaintsList.innerHTML =
+            result
+                .map(complaintCard)
+                .join("");
+    }
 }
 
 
@@ -381,169 +576,217 @@ function filterComplaints(data) {
 
 function complaintCard(c) {
 
-    return `
+    const id = c._id || c.id;
 
+    return `
         <div
             class="complaint-card"
-            onclick="showDetails(${c.id})"
+            onclick="showDetails('${id}')"
         >
 
-            <small>${c.category}</small>
+            <small>
+                ${c.category}
+            </small>
 
-            <h3>${c.title}</h3>
+            <h3>
+                ${c.title}
+            </h3>
 
-            <p>📍 ${c.location}</p>
+            <p>
+                📍 ${c.location}
+            </p>
 
-            <p>${c.description}</p>
+            <p>
+                ${c.description}
+            </p>
 
-            <b>${c.status}</b>
+            <b>
+                ${c.status}
+            </b>
 
         </div>
-
     `;
 }
 
 
 // ================= SEARCH =================
 
-document.getElementById(
-    "searchComplaint"
-).oninput = function() {
+const searchComplaint =
+    document.getElementById("searchComplaint");
 
-    loadComplaints();
+if (searchComplaint) {
 
-};
+    searchComplaint.oninput = function () {
 
+        loadComplaints();
 
-document.getElementById(
-    "statusFilter"
-).onchange = function() {
-
-    loadComplaints();
-
-};
+    };
+}
 
 
-document.getElementById(
-    "categoryFilter"
-).onchange = function() {
+const statusFilter =
+    document.getElementById("statusFilter");
 
-    loadComplaints();
+if (statusFilter) {
 
-};
+    statusFilter.onchange = function () {
+
+        loadComplaints();
+
+    };
+}
+
+
+const categoryFilter =
+    document.getElementById("categoryFilter");
+
+if (categoryFilter) {
+
+    categoryFilter.onchange = function () {
+
+        loadComplaints();
+
+    };
+}
 
 
 // ================= CHARACTER COUNT =================
 
-document.getElementById(
-    "complaintDescription"
-).oninput = function() {
+const complaintDescription =
+    document.getElementById("complaintDescription");
 
-    document.getElementById(
-        "charCount"
-    ).textContent = this.value.length;
+if (complaintDescription) {
 
-};
+    complaintDescription.oninput = function () {
+
+        document.getElementById("charCount").textContent =
+            this.value.length;
+
+    };
+}
 
 
 // ================= DETAILS =================
 
-function showDetails(id) {
+async function showDetails(id) {
 
-    let complaint =
-        complaints.find(function(c) {
+    try {
 
-            return c.id === id;
+        const response = await fetch(
+            `${API_URL}/complaints/${id}`
+        );
 
-        });
+        const data = await response.json();
 
-    if (!complaint) {
-        return;
+        if (!response.ok) {
+            alert(data.message || "Complaint not found");
+            return;
+        }
+
+        const complaint = data.complaint;
+
+        document.getElementById("modalContent").innerHTML = `
+
+            <h2>
+                ${complaint.title}
+            </h2>
+
+            <p>
+                <b>Category:</b>
+                ${complaint.category}
+            </p>
+
+            <p>
+                <b>Location:</b>
+                ${complaint.location}
+            </p>
+
+            <p>
+                <b>Status:</b>
+                ${complaint.status}
+            </p>
+
+            <p>
+                <b>Description:</b>
+                ${complaint.description}
+            </p>
+
+            <p>
+                <b>Resolution:</b>
+                ${complaint.resolutionMessage || "Not available"}
+            </p>
+
+        `;
+
+        document
+            .getElementById("detailsModal")
+            .classList
+            .remove("hidden");
+
+    } catch (error) {
+
+        console.error(
+            "Details Error:",
+            error
+        );
+
     }
-
-    document.getElementById(
-        "modalContent"
-    ).innerHTML = `
-
-        <h2>${complaint.title}</h2>
-
-        <p>
-            <b>Category:</b>
-            ${complaint.category}
-        </p>
-
-        <p>
-            <b>Location:</b>
-            ${complaint.location}
-        </p>
-
-        <p>
-            <b>Status:</b>
-            ${complaint.status}
-        </p>
-
-        <p>
-            <b>Date:</b>
-            ${complaint.date}
-        </p>
-
-        <p>
-            <b>Description:</b>
-            ${complaint.description}
-        </p>
-
-    `;
-
-    document.getElementById(
-        "detailsModal"
-    ).classList.remove("hidden");
 }
 
 
 // ================= CLOSE MODAL =================
 
-document.getElementById(
-    "closeModal"
-).onclick = function() {
+const closeModal =
+    document.getElementById("closeModal");
 
-    document.getElementById(
-        "detailsModal"
-    ).classList.add("hidden");
+if (closeModal) {
 
-};
+    closeModal.onclick = function () {
+
+        document
+            .getElementById("detailsModal")
+            .classList
+            .add("hidden");
+
+    };
+}
 
 
-document.getElementById(
-    "detailsModal"
-).onclick = function(e) {
+const detailsModal =
+    document.getElementById("detailsModal");
 
-    if (e.target === this) {
+if (detailsModal) {
 
-        this.classList.add("hidden");
+    detailsModal.onclick = function (e) {
 
-    }
+        if (e.target === this) {
+            this.classList.add("hidden");
+        }
 
-};
+    };
+}
 
 
 // ================= MOBILE MENU =================
 
-document.getElementById(
-    "mobileMenu"
-).onclick = function() {
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-    document.querySelector(
-        ".sidebar"
-    ).classList.toggle("open");
+if (mobileMenu) {
 
-};
+    mobileMenu.onclick = function () {
+
+        document
+            .querySelector(".sidebar")
+            .classList
+            .toggle("open");
+
+    };
+}
 
 
 // ================= AUTO LOGIN =================
 
 if (currentUser) {
-
-    showDashboard();
-
+    showDashboard(currentUser);
 }
->>>>>>> 5192fe747ad91bdb8eac5544e4603b1454bd8132
