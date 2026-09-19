@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard | Campus Complaint System</title>
+    <title>Admin Dashboard - Campus Complaint System</title>
 
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./admin.css">
 </head>
 
 <body>
 
-    <!-- ================= HEADER ================= -->
-
+    <!-- Header -->
     <header class="admin-header">
 
         <div class="header-container">
-            <a href="admin.html" class="logo">
-                Campus Complaint System
-            </a>
 
-            <nav class="admin-nav" aria-label="Admin Navigation">
-                <a href="admin.html">Dashboard</a>
-                <a href="complaints.html">Complaints</a>
+            <div class="logo">
+                <h1>Campus Complaint System</h1>
+            </div>
+
+            <nav aria-label="Main Navigation">
+                <ul>
+                    <li>
+                        <a href="dashboard.html">Dashboard</a>
+                    </li>
+
+                    <li>
+                        <a href="complaints.html">Complaints</a>
+                    </li>
+                </ul>
             </nav>
 
             <div class="admin-account">
                 <span id="adminName">Admin</span>
+
                 <button type="button" id="logoutBtn">
                     Logout
                 </button>
-
             </div>
 
         </div>
@@ -39,186 +46,194 @@
     </header>
 
 
-    <!-- ================= MAIN ================= -->
-
+    <!-- Main -->
     <main class="admin-main">
 
-        <!-- Page Heading -->
-
+        <!-- Dashboard Heading -->
         <section class="dashboard-header">
 
             <div>
-                <h1>Admin Dashboard</h1>
+                <h2>Admin Dashboard</h2>
 
                 <p>
-                    Manage and monitor campus complaints.
+                    Manage and track campus complaints.
                 </p>
             </div>
 
         </section>
 
 
-        <!-- ================= STATISTICS ================= -->
+        <!-- Complaint Statistics -->
+        <section
+            class="complaint-statistics"
+            aria-labelledby="statisticsHeading"
+        >
 
-        <section class="complaint-statistics" aria-label="Complaint Statistics">
+            <h2 id="statisticsHeading">
+                Complaint Statistics
+            </h2>
 
-            <article class="stat-card">
+            <div class="statistics-container">
 
-                <h2>Total Complaints</h2>
+                <article class="stat-card">
 
-                <p id="totalComplaints">
-                    0
-                </p>
+                    <h3>Total Complaints</h3>
 
-            </article>
+                    <p id="totalComplaints">
+                        0
+                    </p>
 
-
-            <article class="stat-card">
-
-                <h2>Pending</h2>
-
-                <p id="pendingComplaints">
-                    0
-                </p>
-
-            </article>
+                </article>
 
 
-            <article class="stat-card">
+                <article class="stat-card">
 
-                <h2>In Progress</h2>
+                    <h3>Pending</h3>
 
-                <p id="inProgressComplaints">
-                    0
-                </p>
+                    <p id="pendingComplaints">
+                        0
+                    </p>
 
-            </article>
+                </article>
 
 
-            <article class="stat-card">
+                <article class="stat-card">
 
-                <h2>Resolved</h2>
+                    <h3>In Progress</h3>
 
-                <p id="resolvedComplaints">
-                    0
-                </p>
+                    <p id="inProgressComplaints">
+                        0
+                    </p>
 
-            </article>
+                </article>
+
+
+                <article class="stat-card">
+
+                    <h3>Resolved</h3>
+
+                    <p id="resolvedComplaints">
+                        0
+                    </p>
+
+                </article>
+
+            </div>
 
         </section>
 
 
-        <!-- ================= COMPLAINTS ================= -->
+        <!-- Complaints Section -->
+        <section
+            class="complaints-section"
+            aria-labelledby="complaintsHeading"
+        >
 
-        <section class="complaints-section">
-
-            <header class="section-header">
+            <div class="section-header">
 
                 <div>
-                    <h2>Complaints</h2>
+                    <h2 id="complaintsHeading">
+                        Complaints
+                    </h2>
 
                     <p>
-                        View and manage complaints submitted by students.
+                        View and manage student complaints.
                     </p>
                 </div>
 
-            </header>
+            </div>
 
 
             <!-- Filters -->
-
-            <form class="complaint-filters" id="complaintFilterForm">
-
-                <div class="filter-group">
-
-                    <label for="searchComplaint">
-                        Search
-                    </label>
-
-                    <input
-                        type="search"
-                        id="searchComplaint"
-                        name="search"
-                        placeholder="Search complaints..."
-                    >
-
-                </div>
-
+            <form id="complaintFilterForm">
 
                 <div class="filter-group">
 
-                    <label for="categoryFilter">
-                        Category
-                    </label>
+                    <div>
+                        <label for="searchComplaint">
+                            Search
+                        </label>
 
-                    <select id="categoryFilter" name="category">
-
-                        <option value="all">
-                            All Categories
-                        </option>
-
-                        <option value="electricity">
-                            Electricity
-                        </option>
-
-                        <option value="water">
-                            Water
-                        </option>
-
-                        <option value="internet">
-                            Internet
-                        </option>
-
-                        <option value="hostel">
-                            Hostel
-                        </option>
-
-                        <option value="cleaning">
-                            Cleaning
-                        </option>
-
-                        <option value="furniture">
-                            Furniture
-                        </option>
-
-                        <option value="washroom">
-                            Washroom
-                        </option>
-
-                        <option value="other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
+                        <input
+                            type="search"
+                            id="searchComplaint"
+                            placeholder="Search by title, student or location"
+                        >
+                    </div>
 
 
-                <div class="filter-group">
+                    <div>
+                        <label for="categoryFilter">
+                            Category
+                        </label>
 
-                    <label for="statusFilter">
-                        Status
-                    </label>
+                        <select id="categoryFilter">
 
-                    <select id="statusFilter" name="status">
+                            <option value="">
+                                All Categories
+                            </option>
 
-                        <option value="all">
-                            All Status
-                        </option>
+                            <option value="Electricity">
+                                Electricity
+                            </option>
 
-                        <option value="pending">
-                            Pending
-                        </option>
+                            <option value="Water">
+                                Water
+                            </option>
 
-                        <option value="in-progress">
-                            In Progress
-                        </option>
+                            <option value="Internet">
+                                Internet
+                            </option>
 
-                        <option value="resolved">
-                            Resolved
-                        </option>
+                            <option value="Cleaning">
+                                Cleaning
+                            </option>
 
-                    </select>
+                            <option value="Hostel">
+                                Hostel
+                            </option>
+
+                            <option value="Furniture">
+                                Furniture
+                            </option>
+
+                            <option value="Washroom">
+                                Washroom
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div>
+                        <label for="statusFilter">
+                            Status
+                        </label>
+
+                        <select id="statusFilter">
+
+                            <option value="">
+                                All Status
+                            </option>
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Resolved">
+                                Resolved
+                            </option>
+
+                        </select>
+                    </div>
 
                 </div>
 
@@ -226,13 +241,12 @@
 
 
             <!-- Complaints Table -->
-
-            <div class="complaints-table-container">
+            <div class="table-container">
 
                 <table class="complaints-table">
 
                     <caption>
-                        Student Complaints
+                        List of campus complaints
                     </caption>
 
                     <thead>
@@ -272,11 +286,6 @@
                     </thead>
 
 
-                    <!--
-                        admin.js will fetch complaints
-                        from backend and insert rows here.
-                    -->
-
                     <tbody id="complaintsTableBody">
 
                         <tr>
@@ -295,24 +304,109 @@
 
         </section>
 
+
+        <!-- Complaint Details -->
+        <section
+            id="complaintDetailsSection"
+            class="complaint-details-section"
+            hidden
+            aria-labelledby="detailsHeading"
+        >
+
+            <div class="section-header">
+
+                <h2 id="detailsHeading">
+                    Complaint Details
+                </h2>
+
+                <button
+                    type="button"
+                    id="closeDetailsBtn"
+                >
+                    Close
+                </button>
+
+            </div>
+
+
+            <article id="complaintDetails">
+
+                <!-- JavaScript will insert complaint details here -->
+
+            </article>
+
+
+            <!-- Update Complaint -->
+            <form id="updateComplaintForm">
+
+                <input
+                    type="hidden"
+                    id="selectedComplaintId"
+                >
+
+
+                <div>
+
+                    <label for="updateStatus">
+                        Status
+                    </label>
+
+                    <select id="updateStatus" required>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="In Progress">
+                            In Progress
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label for="resolutionMessage">
+                        Resolution Message
+                    </label>
+
+                    <textarea
+                        id="resolutionMessage"
+                        rows="5"
+                        placeholder="Add resolution message"
+                    ></textarea>
+
+                </div>
+
+
+                <button type="submit">
+                    Update Complaint
+                </button>
+
+            </form>
+
+        </section>
+
     </main>
 
 
-    <!-- ================= FOOTER ================= -->
-
-    <footer class="admin-footer">
+    <!-- Footer -->
+    <footer>
 
         <p>
-            Campus Complaint System
+            Campus Complaint Management System
         </p>
 
     </footer>
 
 
-    <!-- ================= JAVASCRIPT ================= -->
-
-    <script src="script.js"></script>
+    <script src="../js/admin.js"></script>
 
 </body>
-
 </html>

@@ -1,399 +1,594 @@
-/* ==========================================================================
-   1. VARIABLES & RESET
-   ========================================================================== */
-:root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --success-color: #16a34a;
-    --warning-color: #ca8a04;
-    --danger-color: #dc2626;
+/* ========================================
+   ADMIN HEADER
+======================================== */
 
-    --bg-main: #f8fafc;
-    --bg-card: #ffffff;
-    --border-color: #e2e8f0;
-
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --text-light: #ffffff;
-
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --radius: 8px;
-    --transition: all 0.2s ease-in-out;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    line-height: 1.5;
-}
-
-/* ==========================================================================
-   2. HEADER & NAVIGATION
-   ========================================================================== */
 .admin-header {
-    background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: var(--shadow-sm);
+    width: 100%;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .header-container {
     max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
     height: 70px;
+    margin: 0 auto;
+    padding: 0 30px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    text-decoration: none;
+.logo h1 {
+    margin: 0;
+    font-size: 22px;
+    color: #1f2937;
 }
 
-.admin-nav {
+
+/* ========================================
+   NAVIGATION
+======================================== */
+
+.admin-header nav ul {
     display: flex;
-    gap: 24px;
+    align-items: center;
+    gap: 30px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
 }
 
-.admin-nav a {
+.admin-header nav a {
+    color: #374151;
     text-decoration: none;
-    color: var(--text-muted);
+    font-size: 15px;
     font-weight: 500;
-    padding: 8px 4px;
-    border-bottom: 2px solid transparent;
-    transition: var(--transition);
 }
 
-.admin-nav a:hover,
-.admin-nav a[href="admin.html"] {
-    /* Temporary active state for dashboard */
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
+.admin-header nav a:hover {
+    color: #2563eb;
 }
+
+
+/* ========================================
+   ADMIN ACCOUNT
+======================================== */
 
 .admin-account {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
 }
 
 #adminName {
+    font-size: 14px;
     font-weight: 600;
-    color: var(--text-main);
+    color: #374151;
 }
 
 #logoutBtn {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    padding: 8px 16px;
-    border-radius: var(--radius);
+    border: none;
+    padding: 9px 16px;
+
+    background-color: #dc2626;
+    color: #ffffff;
+
+    border-radius: 6px;
+
     cursor: pointer;
-    font-weight: 500;
-    transition: var(--transition);
+    font-size: 14px;
 }
 
 #logoutBtn:hover {
-    background-color: #f1f5f9;
-    color: var(--danger-color);
-    border-color: var(--danger-color);
+    background-color: #b91c1c;
 }
 
-/* ==========================================================================
-   3. MAIN LAYOUT & DASHBOARD HEADER
-   ========================================================================== */
+
+/* ========================================
+   MAIN
+======================================== */
+
 .admin-main {
     max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 24px;
+    margin: 0 auto;
+    padding: 35px 30px;
 }
+
+
+/* ========================================
+   DASHBOARD HEADER
+======================================== */
 
 .dashboard-header {
-    margin-bottom: 32px;
+    margin-bottom: 30px;
 }
 
-.dashboard-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 4px;
+.dashboard-header h2 {
+    margin: 0 0 8px;
+
+    font-size: 28px;
+    color: #111827;
 }
 
 .dashboard-header p {
-    color: var(--text-muted);
+    margin: 0;
+
+    color: #6b7280;
+    font-size: 15px;
 }
 
-/* ==========================================================================
-   4. STATISTICS CARDS
-   ========================================================================== */
+
+/* ========================================
+   STATISTICS
+======================================== */
+
 .complaint-statistics {
+    margin-bottom: 35px;
+}
+
+.complaint-statistics>h2 {
+    margin-bottom: 18px;
+
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.statistics-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-    margin-bottom: 40px;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 20px;
 }
 
 .stat-card {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    padding: 24px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
+    padding: 22px;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
 }
 
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
+.stat-card h3 {
+    margin: 0 0 12px;
 
-.stat-card h2 {
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 500;
+
+    color: #6b7280;
 }
 
 .stat-card p {
-    font-size: 2.25rem;
+    margin: 0;
+
+    font-size: 30px;
     font-weight: 700;
-    color: var(--text-main);
+
+    color: #111827;
 }
 
-/* Accent lines for specific cards to improve layout scanability */
-.stat-card:nth-child(2) p {
-    color: var(--danger-color);
-}
 
-/* Pending */
-.stat-card:nth-child(3) p {
-    color: var(--warning-color);
-}
+/* ========================================
+   COMPLAINT SECTION
+======================================== */
 
-/* In Progress */
-.stat-card:nth-child(4) p {
-    color: var(--success-color);
-}
-
-/* Resolved */
-
-/* ==========================================================================
-   5. FILTERS SECTION
-   ========================================================================== */
 .complaints-section {
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    padding: 24px;
+    background-color: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    padding: 25px;
 }
 
 .section-header {
-    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 25px;
 }
 
 .section-header h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
+    margin: 0 0 6px;
+
+    font-size: 21px;
+    color: #111827;
 }
 
 .section-header p {
-    color: var(--text-muted);
-    font-size: 0.875rem;
+    margin: 0;
+
+    color: #6b7280;
+    font-size: 14px;
 }
 
-.complaint-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid var(--border-color);
+
+/* ========================================
+   FILTERS
+======================================== */
+
+#complaintFilterForm {
+    margin-bottom: 25px;
 }
 
 .filter-group {
+    display: grid;
+
+    grid-template-columns: 2fr 1fr 1fr;
+
+    gap: 15px;
+}
+
+.filter-group>div {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 200px;
+    gap: 7px;
 }
 
 .filter-group label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
 }
 
 .filter-group input,
 .filter-group select {
     width: 100%;
-    padding: 10px 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    font-size: 0.95rem;
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    background-color: #ffffff;
+
+    font-size: 14px;
+    color: #374151;
+
     outline: none;
-    transition: var(--transition);
 }
 
 .filter-group input:focus,
 .filter-group select:focus {
-    border-color: var(--primary-color);
-    background-color: var(--bg-card);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: #2563eb;
 }
 
-/* ==========================================================================
-   6. COMPLAINTS TABLE
-   ========================================================================== */
-.complaints-table-container {
+
+/* ========================================
+   TABLE
+======================================== */
+
+.table-container {
     width: 100%;
     overflow-x: auto;
-    /* Desktop grid breaks safely into horizontal scroll on small mobile screens */
 }
 
 .complaints-table {
     width: 100%;
+
     border-collapse: collapse;
-    text-align: left;
-    font-size: 0.95rem;
+
+    min-width: 900px;
 }
 
 .complaints-table caption {
     position: absolute;
+
     width: 1px;
     height: 1px;
-    padding: 0;
-    margin: -1px;
+
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    border: 0;
 }
 
 .complaints-table th {
-    background-color: #f8fafc;
-    color: var(--text-muted);
+    padding: 14px 12px;
+
+    background-color: #f9fafb;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    text-align: left;
+
+    font-size: 13px;
     font-weight: 600;
-    padding: 14px 16px;
-    border-bottom: 2px solid var(--border-color);
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
+
+    color: #374151;
 }
 
 .complaints-table td {
-    padding: 16px;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-main);
+    padding: 15px 12px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    font-size: 14px;
+
+    color: #4b5563;
 }
 
 .complaints-table tbody tr:hover {
-    background-color: #f8fafc;
+    background-color: #f9fafb;
 }
 
-/* Status Badges Placeholder (Highly recommended for your admin.js dynamic logic) */
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    border-radius: 50px;
-    font-size: 0.75rem;
+
+/* ========================================
+   STATUS
+======================================== */
+
+.status {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
     font-weight: 600;
-    text-transform: capitalize;
 }
 
-.status-badge.pending {
-    background-color: #fee2e2;
-    color: var(--danger-color);
+.status-pending {
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
-.status-badge.progress {
-    background-color: #fef9c3;
-    color: var(--warning-color);
+.status-progress {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
-.status-badge.resolved {
+.status-resolved {
     background-color: #dcfce7;
-    color: var(--success-color);
+    color: #166534;
 }
 
-/* Table Action Buttons layout */
-.action-btn {
-    background-color: var(--primary-color);
-    color: var(--text-light);
+.status-unknown {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+
+/* ========================================
+   VIEW BUTTON
+======================================== */
+
+.view-btn {
+    padding: 7px 13px;
+
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    border-radius: 5px;
+
+    background-color: #2563eb;
+    color: #ffffff;
+
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: var(--transition);
+
+    font-size: 13px;
 }
 
-.action-btn:hover {
-    background-color: var(--primary-hover);
+.view-btn:hover {
+    background-color: #1d4ed8;
 }
 
-/* ==========================================================================
-   7. FOOTER
-   ========================================================================== */
-.admin-footer {
+
+/* ========================================
+   COMPLAINT DETAILS
+======================================== */
+
+.complaint-details-section {
+    margin-top: 30px;
+
+    padding: 25px;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.complaint-details-section[hidden] {
+    display: none;
+}
+
+#closeDetailsBtn {
+    padding: 8px 14px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    background-color: #ffffff;
+
+    color: #374151;
+
+    cursor: pointer;
+}
+
+#closeDetailsBtn:hover {
+    background-color: #f3f4f6;
+}
+
+
+/* ========================================
+   DETAILS CONTENT
+======================================== */
+
+#complaintDetails {
+    margin-bottom: 25px;
+}
+
+#complaintDetails h3 {
+    margin: 0 0 20px;
+
+    font-size: 22px;
+
+    color: #111827;
+}
+
+#complaintDetails p {
+    margin: 10px 0;
+
+    font-size: 14px;
+    color: #4b5563;
+}
+
+#complaintDetails strong {
+    color: #111827;
+}
+
+
+/* ========================================
+   UPDATE FORM
+======================================== */
+
+#updateComplaintForm {
+    display: flex;
+    flex-direction: column;
+
+    gap: 18px;
+
+    max-width: 600px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+#updateComplaintForm>div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+#updateComplaintForm label {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+#updateComplaintForm select,
+#updateComplaintForm textarea {
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+#updateComplaintForm select:focus,
+#updateComplaintForm textarea:focus {
+    border-color: #2563eb;
+}
+
+#updateComplaintForm textarea {
+    resize: vertical;
+}
+
+#updateComplaintForm button[type="submit"] {
+    width: fit-content;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 6px;
+
+    background-color: #2563eb;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#updateComplaintForm button[type="submit"]:hover {
+    background-color: #1d4ed8;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+footer {
+    padding: 25px 30px;
+
+    border-top: 1px solid #e5e7eb;
+
     text-align: center;
-    padding: 32px 24px;
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    border-top: 1px solid var(--border-color);
-    margin-top: 60px;
-    background-color: var(--bg-card);
+
+    color: #6b7280;
+
+    font-size: 13px;
 }
 
-/* ==========================================================================
-   8. RESPONSIVE DESIGN (Media Queries)
-   ========================================================================== */
-@media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        height: auto;
-        padding: 16px;
-        gap: 12px;
-    }
 
-    .admin-nav {
-        width: 100%;
-        justify-content: center;
-        gap: 16px;
-    }
+/* ========================================
+   RESPONSIVE
+======================================== */
 
-    .admin-account {
-        width: 100%;
-        justify-content: space-between;
-    }
+@media (max-width: 1000px) {
 
-    .admin-main {
-        margin: 20px auto;
-    }
-
-    .complaint-filters {
-        flex-direction: column;
+    .statistics-container {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .filter-group {
-        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-group>div:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .header-container {
+        height: auto;
+
+        padding: 18px 20px;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+    .admin-main {
+        padding: 25px 15px;
+    }
+
+    .statistics-container {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-group {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-group>div:first-child {
+        grid-column: auto;
+    }
+
+    .complaints-section,
+    .complaint-details-section {
+        padding: 18px;
+    }
+
+    .section-header {
+        align-items: flex-start;
+
+        gap: 15px;
     }
 }
