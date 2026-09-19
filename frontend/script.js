@@ -246,20 +246,15 @@ if (logoutBtn) {
 // ================= NAVIGATION =================
 
 function navigateTo(page) {
-    document
-        .getElementById("overviewSection")
-        .classList
-        .add("hidden");
+    const overviewSection = document.getElementById("overviewSection");
+    if (overviewSection) {
+        overviewSection.classList.add("hidden");
+    }
 
-    document
-        .getElementById("complaintsSection")
-        .classList
-        .add("hidden");
-
-    document
-        .getElementById("newComplaintSection")
-        .classList
-        .add("hidden");
+    const newComplaintSection = document.getElementById("newComplaintSection");
+    if (newComplaintSection) {
+        newComplaintSection.classList.add("hidden");
+    }
 
     const selectedSection =
         document.getElementById(page + "Section");
@@ -270,7 +265,6 @@ function navigateTo(page) {
 
     const titles = {
         overview: "Overview",
-        complaints: "My Complaints",
         newComplaint: "New Complaint"
     };
 
@@ -425,15 +419,17 @@ async function loadComplaints() {
 
         const userComplaints = allComplaints.filter(
             function (complaint) {
+                const reportedBy = complaint.reportedBy;
 
-                if (!complaint.reportedBy) {
+                if (!reportedBy) {
                     return false;
                 }
 
-                return (
-                    complaint.reportedBy._id === currentUser.id ||
-                    complaint.reportedBy === currentUser.id
-                );
+                const reportedById = typeof reportedBy === "object"
+                    ? (reportedBy._id || reportedBy.id)
+                    : reportedBy;
+
+                return String(reportedById) === String(currentUser.id);
             }
         );
 

@@ -21,12 +21,14 @@ const complaintSchema = new mongoose.Schema(
             enum: [
                 "Electricity",
                 "Water",
+                "Food",
+                "Cleanliness",
                 "Internet",
-                "Cleaning",
                 "Hostel",
+                "Other",
+                "Cleaning",
                 "Furniture",
-                "Washroom",
-                "Other"
+                "Washroom"
             ]
         },
 

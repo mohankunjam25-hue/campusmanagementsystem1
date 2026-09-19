@@ -1,14 +1,33 @@
 const mongoose = require("mongoose");
 
+let isMongoConnected = false;
+
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI);
+        const mongoUri = process.env.MONGO_URI;
 
+        if (!mongoUri) {
+            console.log("MongoDB URI missing. Starting in local fallback mode.");
+            isMongoConnected = false;
+            return false;
+        }
+
+        await mongoose.connect(mongoUri);
+
+        isMongoConnected = true;
         console.log("MongoDB connected successfully");
+        return true;
     } catch (error) {
+        isMongoConnected = false;
         console.log("MongoDB connection failed:", error.message);
-        throw error;
+        console.log("Starting in local fallback mode.");
+        return false;
     }
 };
 
-module.exports = connectDB;
+const isDatabaseReady = () => isMongoConnected;
+
+module.exports = {
+    connectDB,
+    isDatabaseReady
+};

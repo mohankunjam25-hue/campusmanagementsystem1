@@ -82,11 +82,23 @@ adminLogout.addEventListener("click", function () {
 // GET COMPLAINTS
 // ================================
 
-function getComplaints() {
+async function getComplaints() {
 
-    return JSON.parse(
-        localStorage.getItem("campusComplaints")
-    ) || [];
+    try {
+        const response = await fetch("http://localhost:5000/api/complaints");
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(data.message || "Failed to load complaints");
+            return [];
+        }
+
+        return data.complaints || [];
+
+    } catch (error) {
+        console.error("Admin complaints fetch error:", error);
+        return [];
+    }
 
 }
 
@@ -95,9 +107,9 @@ function getComplaints() {
 // LOAD ADMIN DATA
 // ================================
 
-function loadAdminData() {
+async function loadAdminData() {
 
-    const complaints = getComplaints();
+    const complaints = await getComplaints();
 
     updateStats(complaints);
 
@@ -230,6 +242,24 @@ function showAllComplaints(complaints = getComplaints()) {
 // COMPLAINT CARD
 // ================================
 
+function getComplaintId(complaint) {
+    return complaint._id || complaint.id || "";
+}
+
+function getComplaintReporterName(complaint) {
+    const reportedBy = complaint.reportedBy;
+
+    if (!reportedBy) {
+        return "Unknown";
+    }
+
+    if (typeof reportedBy === "object") {
+        return reportedBy.name || reportedBy.email || "Unknown";
+    }
+
+    return reportedBy;
+}
+
 function createComplaintCard(complaint, showUpdate) {
 
     let statusClass = "pending";
@@ -242,6 +272,7 @@ function createComplaintCard(complaint, showUpdate) {
         statusClass = "resolved";
     }
 
+    const complaintId = getComplaintId(complaint);
 
     return `
         <div class="admin-complaint-card">
@@ -270,7 +301,7 @@ function createComplaintCard(complaint, showUpdate) {
             <div class="complaint-info">
 
                 <span>
-                    👤 ${escapeHTML(complaint.name || "Unknown")}
+                    👤 ${escapeHTML(getComplaintReporterName(complaint))}
                 </span>
 
                 <span>
@@ -282,7 +313,7 @@ function createComplaintCard(complaint, showUpdate) {
                 </span>
 
                 <span>
-                    📅 ${escapeHTML(complaint.date || "")}
+                    📅 ${escapeHTML(complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString() : "")}
                 </span>
 
             </div>
@@ -296,7 +327,7 @@ function createComplaintCard(complaint, showUpdate) {
 
                     <select
                         class="status-select"
-                        data-id="${complaint.id}"
+                        data-id="${complaintId}"
                     >
 
                         <option
@@ -324,7 +355,7 @@ function createComplaintCard(complaint, showUpdate) {
 
 
                     <button
-                        onclick="updateComplaint('${complaint.id}')"
+                        onclick="updateComplaint('${complaintId}')"
                     >
                         Update Status
                     </button>
@@ -344,48 +375,45 @@ function createComplaintCard(complaint, showUpdate) {
 // UPDATE STATUS
 // ================================
 
-function updateComplaint(id) {
-
-    const complaints = getComplaints();
+async function updateComplaint(id) {
 
     const select =
         document.querySelector(
             `.status-select[data-id="${id}"]`
         );
 
-
     if (!select) {
         return;
     }
 
-
     const newStatus = select.value;
 
+    try {
+        const response = await fetch(`http://localhost:5000/api/complaints/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                status: newStatus,
+                resolutionMessage: "Updated by admin"
+            })
+        });
 
-    const complaintIndex = complaints.findIndex(
-        complaint => String(complaint.id) === String(id)
-    );
+        const data = await response.json();
 
+        if (!response.ok) {
+            alert(data.message || "Complaint update failed");
+            return;
+        }
 
-    if (complaintIndex === -1) {
-        alert("Complaint not found!");
-        return;
+        alert("Complaint status updated!");
+        await loadAdminData();
+
+    } catch (error) {
+        console.error("Admin update complaint error:", error);
+        alert("Server connection failed. Make sure backend is running.");
     }
-
-
-    complaints[complaintIndex].status = newStatus;
-
-
-    localStorage.setItem(
-        "campusComplaints",
-        JSON.stringify(complaints)
-    );
-
-
-    alert("Complaint status updated!");
-
-
-    loadAdminData();
 
 }
 
@@ -437,9 +465,9 @@ navLinks.forEach(link => {
 
         if (sectionId === "allComplaints") {
 
-            showAllComplaints(
-                getComplaints()
-            );
+            getComplaints().then(complaints => {
+                showAllComplaints(complaints);
+            });
 
         }
 
@@ -462,25 +490,23 @@ const adminCategory =
     document.getElementById("adminCategory");
 
 
-function filterComplaints() {
+async function filterComplaints() {
 
-    const complaints = getComplaints();
-
+    const complaints = await getComplaints();
 
     const search =
         adminSearch.value.toLowerCase().trim();
 
-
     const status =
         adminStatus.value;
-
 
     const category =
         adminCategory.value;
 
-
     const filtered = complaints.filter(
         complaint => {
+
+            const reporterName = getComplaintReporterName(complaint).toLowerCase();
 
             const matchesSearch =
                 complaint.title
@@ -491,20 +517,16 @@ function filterComplaints() {
                     .toLowerCase()
                     .includes(search) ||
 
-                complaint.name
-                    .toLowerCase()
+                reporterName
                     .includes(search);
-
 
             const matchesStatus =
                 status === "all" ||
                 complaint.status === status;
 
-
             const matchesCategory =
                 category === "all" ||
                 complaint.category === category;
-
 
             return (
                 matchesSearch &&
@@ -514,7 +536,6 @@ function filterComplaints() {
 
         }
     );
-
 
     showAllComplaints(filtered);
 

@@ -1,6 +1,21 @@
 const User = require("../model/userLoginLogoutModel");
+const { getUsers, saveUsers, makeId } = require("../data/store");
+const { isDatabaseReady } = require("../config/db");
 
-// Register User
+const normalizeEmail = (email) => String(email || "").trim().toLowerCase();
+
+const findUserByEmail = async (email, password) => {
+    const users = getUsers();
+    const normalizedEmail = normalizeEmail(email);
+
+    const match = users.find((user) =>
+        normalizeEmail(user.email) === normalizedEmail &&
+        String(user.password) === String(password)
+    );
+
+    return match || null;
+};
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -11,30 +26,62 @@ const registerUser = async (req, res) => {
             });
         }
 
-        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedEmail = normalizeEmail(email);
 
-        const existingUser = await User.findOne({ email: normalizedEmail });
+        if (isDatabaseReady()) {
+            const existingUser = await User.findOne({ email: normalizedEmail });
 
-        if (existingUser) {
+            if (existingUser) {
+                return res.status(400).json({
+                    message: "User already exists"
+                });
+            }
+
+            const user = await User.create({
+                name: String(name).trim(),
+                email: normalizedEmail,
+                password,
+                role: "student"
+            });
+
+            return res.status(201).json({
+                message: "User registered successfully",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
+            });
+        }
+
+        const users = getUsers();
+        const exists = users.some((user) => normalizeEmail(user.email) === normalizedEmail);
+
+        if (exists) {
             return res.status(400).json({
                 message: "User already exists"
             });
         }
 
-        const user = await User.create({
+        const newUser = {
+            id: makeId(),
             name: String(name).trim(),
             email: normalizedEmail,
             password,
-            role: "student"
-        });
+            role: "student",
+            createdAt: new Date().toISOString()
+        };
 
-        res.status(201).json({
+        saveUsers([...users, newUser]);
+
+        return res.status(201).json({
             message: "User registered successfully",
             user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role
             }
         });
 
@@ -48,8 +95,6 @@ const registerUser = async (req, res) => {
     }
 };
 
-
-// Login User
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -60,16 +105,36 @@ const loginUser = async (req, res) => {
             });
         }
 
-        const normalizedEmail = String(email).trim().toLowerCase();
+        const normalizedEmail = normalizeEmail(email);
 
-        const user = await User.findOne({
-            email: normalizedEmail,
-            password: password,
-            role: "student"
-        }) || await User.findOne({
-            email: normalizedEmail,
-            password: password
-        });
+        if (isDatabaseReady()) {
+            const user = await User.findOne({
+                email: normalizedEmail,
+                password,
+                role: "student"
+            }) || await User.findOne({
+                email: normalizedEmail,
+                password
+            });
+
+            if (!user) {
+                return res.status(401).json({
+                    message: "Invalid email or password"
+                });
+            }
+
+            return res.status(200).json({
+                message: "Login successful",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role || "student"
+                }
+            });
+        }
+
+        const user = await findUserByEmail(normalizedEmail, password);
 
         if (!user) {
             return res.status(401).json({
@@ -77,10 +142,10 @@ const loginUser = async (req, res) => {
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             message: "Login successful",
             user: {
-                id: user._id,
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role || "student"

@@ -284,15 +284,6 @@
 
             <button
                 class="nav-link"
-                data-section="complaints"
-                onclick="navigateTo('complaints')"
-            >
-                My Complaints
-            </button>
-
-
-            <button
-                class="nav-link"
                 data-section="newComplaint"
                 onclick="navigateTo('newComplaint')"
             >
@@ -478,14 +469,6 @@
 
                     </div>
 
-
-                    <button
-                        onclick="navigateTo('complaints')"
-                        class="secondary-btn"
-                    >
-                        View All
-                    </button>
-
                 </div>
 
 
@@ -502,125 +485,6 @@
                         </p>
 
                     </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= MY COMPLAINTS ================= -->
-
-        <section
-            id="complaintsSection"
-            class="dashboard-section hidden"
-        >
-
-            <div class="section-header">
-
-                <div>
-
-                    <h2>
-                        My Complaints
-                    </h2>
-
-                    <p>
-                        Track all your complaints
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- FILTERS -->
-
-            <div class="filters">
-
-                <input
-                    type="text"
-                    id="searchComplaint"
-                    placeholder="Search complaint..."
-                >
-
-
-                <select id="statusFilter">
-
-                    <option value="all">
-                        All Status
-                    </option>
-
-                    <option value="Pending">
-                        Pending
-                    </option>
-
-                    <option value="In Progress">
-                        In Progress
-                    </option>
-
-                    <option value="Resolved">
-                        Resolved
-                    </option>
-
-                </select>
-
-
-                <select id="categoryFilter">
-
-                    <option value="all">
-                        All Categories
-                    </option>
-
-                    <option value="Electricity">
-                        Electricity
-                    </option>
-
-                    <option value="Water">
-                        Water
-                    </option>
-
-                    <option value="Food">
-                        Food
-                    </option>
-
-                    <option value="Cleanliness">
-                        Cleanliness
-                    </option>
-
-                    <option value="Internet">
-                        Internet
-                    </option>
-
-                    <option value="Hostel">
-                        Hostel
-                    </option>
-
-                    <option value="Other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- COMPLAINT LIST -->
-
-            <div
-                id="complaintsList"
-                class="complaints-list"
-            >
-
-                <div class="empty-state">
-
-                    <h3>
-                        No complaints found
-                    </h3>
-
-                    <p>
-                        Your complaints will appear here.
-                    </p>
 
                 </div>
 
