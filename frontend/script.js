@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 // ================= DATA =================
 
 let currentUser =
@@ -544,3 +546,4 @@ if (currentUser) {
     showDashboard();
 
 }
+>>>>>>> 5192fe747ad91bdb8eac5544e4603b1454bd8132
