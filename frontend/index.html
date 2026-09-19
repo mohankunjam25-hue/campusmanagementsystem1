@@ -1,477 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
-<<<<<<< HEAD
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampusCare || Camplaint Management</title>
+
+    <title>CampusCare | Complaint Management</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
+    <!-- ================= LOGIN ================= -->
+
     <section id="loginPage" class="login-page">
+
         <div class="login-card">
+
             <div class="brand">
-                <div class="brand-logo"></div>
+                <div class="brand-logo">C</div>
                 <h2>CampusCare</h2>
             </div>
 
-            <h1>Welcome Back </h1>
+            <h1>Welcome Back</h1>
+
             <p>Login to manage your campus complaints.</p>
 
             <form id="loginForm">
+
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" id="email" placeholder="Enter email" required>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter email"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="password" placeholder="Enter password" required>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        required
+                    >
                 </div>
 
-                <button type="submit" class="primary-btn">Login</button>
+                <button type="submit" class="primary-btn">
+                    Login
+                </button>
+
             </form>
 
             <div class="demo-login">
+
                 <p>Demo Login</p>
-                <button id="studentDemo">Student</button>
-                <button id="adminDemo">Admin</button>
+
+                <button id="studentDemo">
+                    Student
+                </button>
+
+                <button id="adminDemo">
+                    Admin
+                </button>
+
             </div>
+
         </div>
+
     </section>
 
-<section id="dashboardPage" class="dashboard-page hidden">
-    <aside class="sidebar">
 
-        <div class="sidebar-brand">
-            <div class="brand-logo">C</div>
-            <div>
-                <strong>CampusCare</strong>
-                <small>Complaint System</small>
-            </div>
-        </div>
+    <!-- ================= DASHBOARD ================= -->
 
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-link active" data-section="overview">Overview</a>
-            <a href="#" class="nav-link" data-section="complaints">My Complaints</a>
-            <a href="#" class="nav-link" data-section="newComplaint"> New Complaint</a>
-        </nav>
+    <section id="dashboardPage" class="dashboard-page hidden">
 
-        <div class="sidebar-bottom">
-            <div class="user-mini">
-                <div class="avatar" id="sidebarAvatar">V</div>
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-brand">
+
+                <div class="brand-logo">C</div>
+
                 <div>
-                    <strong id="sidebarName">Student</strong>
-                    <small id="sidebarEmail">student@example.com</small>
+                    <strong>CampusCare</strong>
+                    <small>Complaint System</small>
                 </div>
+
             </div>
 
-            <button id="logoutBtn" class="logout-btn">Logout</button>
-        </div>
 
-    </aside>
+            <nav class="sidebar-nav">
 
-    <main class="main-content">
-        <header class="topbar">
-            <div>
-                <button id="mobileMenu" class="mobile-menu">☰</button>
-                <h2 id="pageTitle">Overview</h2>
-                <p id="pageSubtitle">Manage your campus complaints.</p>
+                <a href="#"
+                   class="nav-link active"
+                   data-section="overview">
+                    Overview
+                </a>
+
+                <a href="#"
+                   class="nav-link"
+                   data-section="complaints">
+                    My Complaints
+                </a>
+
+                <a href="#"
+                   class="nav-link"
+                   data-section="newComplaint">
+                    New Complaint
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <div class="user-mini">
+
+                    <div class="avatar" id="sidebarAvatar">
+                        V
+                    </div>
+
+                    <div>
+                        <strong id="sidebarName">
+                            Student
+                        </strong>
+
+                        <small id="sidebarEmail">
+                            student@example.com
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <button id="logoutBtn" class="logout-btn">
+                    Logout
+                </button>
+
             </div>
 
-            <div class="top-avatar" id="topAvatar"></div>
-        </header>
+        </aside>
 
-        <section id="overviewSection" class="content-section">
-            <div class="welcome-card">
+
+        <!-- MAIN CONTENT -->
+
+        <main class="main-content">
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
                 <div>
-                    <span class="badge">Student Dashboard</span>
 
-                    <h1>Hello,<span id="welcomeName">Student</span></h1>
+                    <button id="mobileMenu"
+                            class="mobile-menu">
+                        ☰
+                    </button>
 
-                    <p>
-                        Have a campus issue?
-                        Let us know and get it resolved.
+                    <h2 id="pageTitle">
+                        Overview
+                    </h2>
+
+                    <p id="pageSubtitle">
+                        Manage your campus complaints.
                     </p>
 
-                    <button class="primary-btn" data-go="newComplaint">+ Submit Complaint</button>
                 </div>
-                <div class="welcome-illustration">🏫</div>
-            </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
+
+                <div class="top-avatar" id="topAvatar">
+                    V
+                </div>
+
+            </header>
+
+
+            <!-- ================= OVERVIEW ================= -->
+
+            <section id="overviewSection"
+                     class="content-section">
+
+                <div class="welcome-card">
+
                     <div>
-                        <small>Total</small>
-                        <strong id="totalComplaints">0</strong>
-=======
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CampusCare || Camplaint Management</title>
-    </head>
-    <body>
-        <section id="loginPage" class="login-page">
-            <div class="login-card">
-                <div class="brand">
-                    <div class="brand-logo">C</div>
-                    <h2>CampusCare</h2>
-                </div>
 
-                <h1>Welcome Back </h1>
-                <p>Login to manage your campus complaints.</p>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="email" placeholder="Enter email"
-                            required>
->>>>>>> 2c3d2dba5a9f44d7876fed101a58b7bfba194860
-                    </div>
+                        <span class="badge">
+                            Student Dashboard
+                        </span>
 
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="password"
-                            placeholder="Enter password" required>
-                    </div>
+                        <h1>
+                            Hello,
+                            <span id="welcomeName">
+                                Student
+                            </span>
+                        </h1>
 
-                    <button type="submit" class="primary-btn">Login</button>
-                </form>
+                        <p>
+                            Have a campus issue?
+                            Let us know and get it resolved.
+                        </p>
 
-                <div class="demo-login">
-                    <p>Demo Login</p>
-                    <button id="studentDemo">Student</button>
-                    <button id="adminDemo">Admin</button>
-                </div>
-            </div>
-        </section>
-
-<<<<<<< HEAD
-<!-- <script src="script.js"></script> -->
-=======
-        <section id="dashboardPage" class="dashboard-page hidden">
-            <aside class="sidebar">
->>>>>>> 2c3d2dba5a9f44d7876fed101a58b7bfba194860
-
-                <div class="sidebar-brand">
-                    <div class="brand-logo">C</div>
-                    <div>
-                        <strong>CampusCare</strong>
-                        <small>Complaint System</small>
-                    </div>
-                </div>
-
-                <nav class="sidebar-nav">
-                    <a href="#" class="nav-link active"
-                        data-section="overview">Overview</a>
-                    <a href="#" class="nav-link" data-section="complaints">My
-                        Complaints</a>
-                    <a href="#" class="nav-link" data-section="newComplaint">
-                        New Complaint</a>
-                </nav>
-
-                <div class="sidebar-bottom">
-                    <div class="user-mini">
-                        <div class="avatar" id="sidebarAvatar">V</div>
-                        <div>
-                            <strong id="sidebarName">Student</strong>
-                            <small id="sidebarEmail">student@example.com</small>
-                        </div>
-                    </div>
-
-                    <button id="logoutBtn" class="logout-btn">Logout</button>
-                </div>
-
-            </aside>
-
-            <main class="main-content">
-                <header class="topbar">
-                    <div>
-                        <button id="mobileMenu" class="mobile-menu">☰</button>
-                        <h2 id="pageTitle">Overview</h2>
-                        <p id="pageSubtitle">Manage your campus complaints.</p>
-                    </div>
-
-                    <div class="top-avatar" id="topAvatar">V</div>
-                </header>
-
-                <section id="overviewSection" class="content-section">
-                    <div class="welcome-card">
-                        <div>
-                            <span class="badge">Student Dashboard</span>
-
-                            <h1>Hello,<span id="welcomeName">Student</span></h1>
-
-                            <p>
-                                Have a campus issue?
-                                Let us know and get it resolved.
-                            </p>
-
-                            <button class="primary-btn" data-go="newComplaint">+
-                                Submit Complaint</button>
-                        </div>
-                        <div class="welcome-illustration">🏫</div>
-                    </div>
-
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div>
-                                <small>Total</small>
-                                <strong id="totalComplaints">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div>
-                                <small>Pending</small>
-                                <strong id="pendingComplaints">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div>
-                                <small>In Progress</small>
-                                <strong id="progressComplaints">0</strong>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div>
-                                <small>Resolved</small>
-                                <strong id="resolvedComplaints">0</strong>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="section-header">
-                        <div>
-                            <h3>Recent Complaints</h3>
-                            <p>Your latest complaints</p>
-                        </div>
-
-                        <button class="text-btn" data-go="complaints"> View All
+                        <button
+                            class="primary-btn"
+                            data-go="newComplaint">
+                            + Submit Complaint
                         </button>
-                    </div>
-
-                    <div id="recentComplaints"
-                        class="complaints-container"></div>
-                </section>
-
-                <section id="complaintsSection" class="content-section hidden">
-                    <div class="section-header">
-                        <div>
-                            <h3>My Complaints</h3>
-                            <p>Track your complaints.</p>
-                        </div>
-
-                        <button class="primary-btn" data-go="newComplaint">+ New
-                            Complaint</button>
-                    </div>
-
-                    <div class="filter-bar">
-                        <input type="text" id="searchComplaint"
-                            placeholder="Search complaints...">
-
-                        <select id="statusFilter">
-                            <option value="all">All Status</option>
-                            <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
-                            <option value="Resolved">Resolved</option>
-                        </select>
-
-                        <select id="categoryFilter">
-                            <option value="all">All Categories</option>
-                            <option value="Electricity">Electricity</option>
-                            <option value="Water">Water</option>
-                            <option value="Internet">Internet</option>
-                            <option value="Cleaning">Cleaning</option>
-                            <option value="Hostel">Hostel</option>
-                            <option value="Furniture">Furniture</option>
-                            <option value="Washroom">Washroom</option>
-                            <option value="Other">Other</option>
-                        </select>
 
                     </div>
-                    <div id="complaintsList" class="complaints-list"></div>
 
-                </section>
 
-                <section id="newComplaintSection"
-                    class="content-section hidden">
-
-                    <div class="section-header">
-                        <div>
-                            <h3>Submit Complaint</h3>
-                            <p>Report a campus problem.</p>
-                        </div>
+                    <div class="welcome-illustration">
+                        🏫
                     </div>
 
-                    <div class="complaint-form-card">
-                        <form id="complaintForm">
+                </div>
 
-                            <div class="form-grid">
 
-                                <!-- Complaint Title -->
-                                <div class="form-group">
+                <!-- STATS -->
 
-                                    <label for="complaintTitle">
-                                        Complaint Title *
-                                    </label>
+                <div class="stats-grid">
 
-                                    <input
-                                        type="text"
-                                        id="complaintTitle"
-                                        name="title"
-                                        placeholder="e.g. Internet not working"
-                                        required>
+                    <div class="stat-card">
+                        <small>Total</small>
+                        <strong id="totalComplaints">
+                            0
+                        </strong>
+                    </div>
 
-                                </div>
+                    <div class="stat-card">
+                        <small>Pending</small>
+                        <strong id="pendingComplaints">
+                            0
+                        </strong>
+                    </div>
 
-                                <!-- Category -->
-                                <div class="form-group">
+                    <div class="stat-card">
+                        <small>In Progress</small>
+                        <strong id="progressComplaints">
+                            0
+                        </strong>
+                    </div>
 
-                                    <label for="complaintCategory">
-                                        Category *
-                                    </label>
+                    <div class="stat-card">
+                        <small>Resolved</small>
+                        <strong id="resolvedComplaints">
+                            0
+                        </strong>
+                    </div>
 
-                                    <select
-                                        id="complaintCategory"
-                                        name="category"
-                                        required>
+                </div>
 
-                                        <option value>
-                                            Select category
-                                        </option>
 
-                                        <option value="Electricity">
-                                            Electricity
-                                        </option>
+                <!-- RECENT -->
 
-                                        <option value="Water">
-                                            Water
-                                        </option>
+                <div class="section-header">
 
-                                        <option value="Internet">
-                                            Internet
-                                        </option>
+                    <div>
+                        <h3>Recent Complaints</h3>
 
-                                        <option value="Cleaning">
-                                            Cleaning
-                                        </option>
+                        <p>
+                            Your latest complaints
+                        </p>
+                    </div>
 
-                                        <option value="Hostel">
-                                            Hostel
-                                        </option>
+                    <button
+                        class="text-btn"
+                        data-go="complaints">
+                        View All
+                    </button>
 
-                                        <option value="Furniture">
-                                            Furniture
-                                        </option>
+                </div>
 
-                                        <option value="Washroom">
-                                            Washroom
-                                        </option>
 
-                                        <option value="Other">
-                                            Other
-                                        </option>
+                <div id="recentComplaints"
+                     class="complaints-container">
+                </div>
 
-                                    </select>
+            </section>
 
-                                </div>
 
-                            </div>
+            <!-- ================= COMPLAINTS ================= -->
 
-                            <div class="form-grid">
+            <section id="complaintsSection"
+                     class="content-section hidden">
 
-                                <!-- Location -->
-                                <div class="form-group">
+                <div class="section-header">
 
-                                    <label for="complaintLocation">
-                                        Location *
-                                    </label>
+                    <div>
+                        <h3>My Complaints</h3>
 
-                                    <input
-                                        type="text"
-                                        id="complaintLocation"
-                                        name="location"
-                                        placeholder="e.g. Hostel Block A"
-                                        required>
+                        <p>
+                            Track your complaints.
+                        </p>
+                    </div>
 
-                                </div>
+                    <button
+                        class="primary-btn"
+                        data-go="newComplaint">
+                        + New Complaint
+                    </button>
 
-                                <!-- Student Name -->
-                                <div class="form-group">
+                </div>
 
-                                    <label for="complaintName">
-                                        Your Name
-                                    </label>
 
-                                    <input
-                                        type="text"
-                                        id="complaintName"
-                                        name="studentName"
-                                        readonly>
+                <!-- FILTER -->
 
-                                </div>
+                <div class="filter-bar">
 
-                            </div>
+                    <input
+                        type="text"
+                        id="searchComplaint"
+                        placeholder="Search complaints..."
+                    >
 
-                            <!-- Description -->
+                    <select id="statusFilter">
+
+                        <option value="all">
+                            All Status
+                        </option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="In Progress">
+                            In Progress
+                        </option>
+
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+
+                    </select>
+
+
+                    <select id="categoryFilter">
+
+                        <option value="all">
+                            All Categories
+                        </option>
+
+                        <option value="Electricity">
+                            Electricity
+                        </option>
+
+                        <option value="Water">
+                            Water
+                        </option>
+
+                        <option value="Internet">
+                            Internet
+                        </option>
+
+                        <option value="Cleaning">
+                            Cleaning
+                        </option>
+
+                        <option value="Hostel">
+                            Hostel
+                        </option>
+
+                        <option value="Furniture">
+                            Furniture
+                        </option>
+
+                        <option value="Washroom">
+                            Washroom
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div id="complaintsList"
+                     class="complaints-list">
+                </div>
+
+            </section>
+
+
+            <!-- ================= NEW COMPLAINT ================= -->
+
+            <section id="newComplaintSection"
+                     class="content-section hidden">
+
+                <div class="section-header">
+
+                    <div>
+                        <h3>Submit Complaint</h3>
+
+                        <p>
+                            Report a campus problem.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="complaint-form-card">
+
+                    <form id="complaintForm">
+
+
+                        <div class="form-grid">
+
                             <div class="form-group">
 
-                                <label for="complaintDescription">
-                                    Description *
-                                </label>
-
-                                <textarea
-                                    id="complaintDescription"
-                                    name="description"
-                                    rows="5"
-                                    maxlength="500"
-                                    placeholder="Describe the problem..."
-                                    required></textarea>
-
-                            </div>
-
-                            <!-- Image -->
-                            <div class="form-group">
-
-                                <label for="complaintImage">
-                                    Complaint Image
+                                <label>
+                                    Complaint Title *
                                 </label>
 
                                 <input
-                                    type="file"
-                                    id="complaintImage"
-                                    name="image"
-                                    accept="image/*">
+                                    type="text"
+                                    id="complaintTitle"
+                                    placeholder="e.g. Internet not working"
+                                    required
+                                >
 
                             </div>
 
-                            <!-- Actions -->
-                            <div class="form-actions">
 
-                                <button
-                                    type="button"
-                                    class="secondary-btn"
-                                    data-go="overview">
-                                    Cancel
-                                </button>
+                            <div class="form-group">
 
-                                <button
-                                    type="submit"
-                                    class="primary-btn"
-                                    id="submitBtn">
-                                    Submit Complaint
-                                </button>
+                                <label>
+                                    Category *
+                                </label>
+
+                                <select
+                                    id="complaintCategory"
+                                    required>
+
+                                    <option value="">
+                                        Select category
+                                    </option>
+
+                                    <option value="Electricity">
+                                        Electricity
+                                    </option>
+
+                                    <option value="Water">
+                                        Water
+                                    </option>
+
+                                    <option value="Internet">
+                                        Internet
+                                    </option>
+
+                                    <option value="Cleaning">
+                                        Cleaning
+                                    </option>
+
+                                    <option value="Hostel">
+                                        Hostel
+                                    </option>
+
+                                    <option value="Furniture">
+                                        Furniture
+                                    </option>
+
+                                    <option value="Washroom">
+                                        Washroom
+                                    </option>
+
+                                    <option value="Other">
+                                        Other
+                                    </option>
+
+                                </select>
 
                             </div>
 
-                        </form>
-                    </div>
-                </section>
-            </main>
-        </section>
-        script src="script.js"></script>
-    </body>
+                        </div>
+
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+
+                                <label>
+                                    Location *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="complaintLocation"
+                                    placeholder="e.g. Hostel Block A"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Your Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="complaintName"
+                                    readonly
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Description *
+                            </label>
+
+                            <textarea
+                                id="complaintDescription"
+                                rows="5"
+                                maxlength="500"
+                                placeholder="Describe the problem..."
+                                required>
+                            </textarea>
+
+                            <small>
+                                Characters:
+                                <span id="charCount">0</span>/500
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Complaint Image
+                            </label>
+
+                            <input
+                                type="file"
+                                id="complaintImage"
+                                accept="image/*"
+                            >
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button
+                                type="button"
+                                class="secondary-btn"
+                                data-go="overview">
+                                Cancel
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="primary-btn">
+                                Submit Complaint
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </section>
+
+
+    <!-- ================= MODAL ================= -->
+
+    <div id="detailsModal"
+         class="modal-overlay hidden">
+
+        <div class="modal">
+
+            <button id="closeModal"
+                    class="close-modal">
+                ✕
+            </button>
+
+            <div id="modalContent"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
 </html>
