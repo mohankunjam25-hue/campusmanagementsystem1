@@ -6,7 +6,9 @@
 
     <title>CampusCare - Complaint Management System</title>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ui.css">
 </head>
 
 <body>
@@ -18,95 +20,45 @@
     <div class="login-container">
 
         <div class="login-header">
-
-            <div class="logo">
+            <div class="logo" style="display:flex; justify-content:center; align-items:center; gap:8px;">
+                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:#2563eb;"></i>
                 CampusCare
             </div>
-
             <h1>Welcome Back</h1>
-
-            <p>
-                Campus Complaint Management System
-            </p>
-
+            <p>Sign in to your student account</p>
         </div>
-
 
         <form id="loginForm">
-
-            <div class="form-group">
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    required
-                >
-
+            <div class="form-group" style="position: relative;">
+                <label for="email">Email address</label>
+                <div style="position: relative;">
+                    <i data-lucide="mail" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                    <input type="email" id="email" placeholder="student@university.edu" required style="padding-left: 38px;">
+                </div>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="password">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter your password"
-                    required
-                >
-
+            <div class="form-group" style="position: relative;">
+                <label for="password">Password</label>
+                <div style="position: relative;">
+                    <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                    <input type="password" id="password" placeholder="••••••••" required style="padding-left: 38px;">
+                </div>
             </div>
 
-
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                Login
+            <button type="submit" class="primary-btn" style="margin-top: 10px;">
+                Sign In <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
             </button>
-
         </form>
 
-
-        <div class="login-links">
-
-            <p>
-                New student?
-            </p>
-
-            <button
-                type="button"
-                id="registerBtn"
-                class="secondary-btn"
-            >
-                Create Account
-            </button>
-
+        <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
+            <span style="color: #64748b;">Don't have an account?</span>
+            <a href="#" id="registerBtn" style="color: #2563eb; font-weight: 600; text-decoration: none;">Sign up</a>
         </div>
 
-
-        <div class="admin-login-box">
-
-            <p>
-                Are you an admin?
-            </p>
-
-            <button
-                type="button"
-                id="adminLoginBtn"
-                class="secondary-btn"
-            >
-                Admin Login
-            </button>
-
+        <div class="admin-login-box" style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 25px;">
+            <a href="admin.html" id="adminLoginBtn" style="color: #64748b; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                <i data-lucide="shield" style="width:14px;height:14px;"></i> Login as Administrator
+            </a>
         </div>
 
     </div>
@@ -124,94 +76,47 @@
     <div class="login-container">
 
         <div class="login-header">
-
-            <div class="logo">
+            <div class="logo" style="display:flex; justify-content:center; align-items:center; gap:8px;">
+                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:#2563eb;"></i>
                 CampusCare
             </div>
-
             <h1>Create Account</h1>
-
-            <p>
-                Register as a student
-            </p>
-
+            <p>Join the student portal</p>
         </div>
 
-
         <form id="registerForm">
-
-            <div class="form-group">
-
-                <label for="registerName">
-                    Full Name
-                </label>
-
-                <input
-                    type="text"
-                    id="registerName"
-                    placeholder="Enter your full name"
-                    required
-                >
-
+            <div class="form-group" style="position: relative;">
+                <label for="registerName">Full Name</label>
+                <div style="position: relative;">
+                    <i data-lucide="user" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                    <input type="text" id="registerName" placeholder="John Doe" required style="padding-left: 38px;">
+                </div>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="registerEmail">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="registerEmail"
-                    placeholder="Enter your email"
-                    required
-                >
-
+            <div class="form-group" style="position: relative;">
+                <label for="registerEmail">Email address</label>
+                <div style="position: relative;">
+                    <i data-lucide="mail" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                    <input type="email" id="registerEmail" placeholder="student@university.edu" required style="padding-left: 38px;">
+                </div>
             </div>
 
-
-            <div class="form-group">
-
-                <label for="registerPassword">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="registerPassword"
-                    placeholder="Create password"
-                    required
-                >
-
+            <div class="form-group" style="position: relative;">
+                <label for="registerPassword">Password</label>
+                <div style="position: relative;">
+                    <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                    <input type="password" id="registerPassword" placeholder="Create a password" required style="padding-left: 38px;">
+                </div>
             </div>
 
-
-            <button
-                type="submit"
-                class="primary-btn"
-            >
-                Register
+            <button type="submit" class="primary-btn" style="margin-top: 10px;">
+                Sign Up <i data-lucide="user-plus" style="width:16px;height:16px;"></i>
             </button>
-
         </form>
 
-
-        <div class="login-links">
-
-            <p>
-                Already have an account?
-            </p>
-
-            <button
-                type="button"
-                onclick="showLogin()"
-                class="secondary-btn"
-            >
-                Login
-            </button>
-
+        <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
+            <span style="color: #64748b;">Already have an account?</span>
+            <a href="#" id="backToLoginBtn" style="color: #2563eb; font-weight: 600; text-decoration: none;">Sign in</a>
         </div>
 
     </div>
@@ -245,7 +150,7 @@
 
         <!-- USER PROFILE -->
 
-        <div class="user-profile">
+        <div class="user-profile"> 
 
             <div
                 id="sidebarAvatar"
@@ -273,22 +178,26 @@
 
         <nav class="sidebar-nav">
 
-            <button
+            <a
                 class="nav-link active"
+                href="#overview"
                 data-section="overview"
-                onclick="navigateTo('overview')"
+                style="display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding: 12px 14px; text-decoration: none;"
             >
+                <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
                 Overview
-            </button>
+            </a>
 
 
-            <button
+            <a
                 class="nav-link"
+                href="#newComplaint"
                 data-section="newComplaint"
-                onclick="navigateTo('newComplaint')"
+                style="display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding: 12px 14px; text-decoration: none;"
             >
+                <i data-lucide="plus-circle" style="width:18px;height:18px;"></i>
                 New Complaint
-            </button>
+            </a>
 
         </nav>
 
@@ -298,7 +207,9 @@
         <button
             id="logoutBtn"
             class="logout-btn"
+            style="display:flex; align-items:center; justify-content:center; gap:8px;"
         >
+            <i data-lucide="log-out" style="width:18px;height:18px;"></i>
             Logout
         </button>
 
@@ -730,7 +641,7 @@
 
 
 <!-- JAVASCRIPT -->
-
+<script src="ui.js"></script>
 <script src="script.js"></script>
 
 </body>

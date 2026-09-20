@@ -59,6 +59,12 @@ const complaintSchema = new mongoose.Schema(
             type: String,
             default: null,
             trim: true
+        },
+
+        resolvedBy: {
+            type: String,
+            default: null,
+            trim: true
         }
     },
     {

@@ -19,9 +19,16 @@ const createComplaint = async (req, res) => {
             title,
             description,
             category,
-            location,
-            reportedBy
+            location
         } = req.body;
+
+        // Use the authenticated user's ID
+        const reportedBy = req.user._id || req.user.id;
+        
+        let image = null;
+        if (req.file) {
+            image = `/uploads/${req.file.filename}`;
+        }
 
         if (!title || !description || !category || !location || !reportedBy) {
             return res.status(400).json({
@@ -35,7 +42,8 @@ const createComplaint = async (req, res) => {
                 description,
                 category,
                 location,
-                reportedBy
+                reportedBy,
+                image
             });
 
             return res.status(201).json({
@@ -52,11 +60,12 @@ const createComplaint = async (req, res) => {
             category,
             location,
             reportedBy,
+            image,
             status: "Pending",
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            reporterName: "Student",
-            reporterEmail: "student@example.com"
+            reporterName: req.user.name || "Student",
+            reporterEmail: req.user.email || "student@example.com"
         };
 
         saveComplaints([newComplaint, ...complaints]);
@@ -139,10 +148,15 @@ const updateComplaint = async (req, res) => {
     try {
         const { status, resolutionMessage } = req.body;
 
+        const updateFields = { status, resolutionMessage };
+        if (req.user && req.user.name) {
+            updateFields.resolvedBy = req.user.name;
+        }
+
         if (isDatabaseReady()) {
             const complaint = await Complaint.findByIdAndUpdate(
                 req.params.id,
-                { status, resolutionMessage },
+                updateFields,
                 { new: true, runValidators: true }
             );
 
@@ -163,6 +177,7 @@ const updateComplaint = async (req, res) => {
             complaint._id === req.params.id
                 ? {
                     ...complaint,
+                    ...updateFields,
                     status: status || complaint.status,
                     resolutionMessage: resolutionMessage || complaint.resolutionMessage,
                     updatedAt: new Date().toISOString()

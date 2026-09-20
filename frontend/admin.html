@@ -6,7 +6,9 @@
 
     <title>Admin Dashboard - Campus Care</title>
 
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="ui.css">
 </head>
 
 <body>
@@ -19,53 +21,36 @@
 
         <div class="admin-login-card">
 
-            <div class="admin-logo">
-                <div class="icon"></div>
-
+            <div class="admin-logo" style="display:flex; flex-direction:column; align-items:center;">
+                <i data-lucide="shield-check" style="width:40px;height:40px;color:#2563eb;margin-bottom:10px;"></i>
                 <h1>Admin Login</h1>
-
                 <p>Campus Care Management System</p>
             </div>
 
             <form id="adminLoginForm">
-
-                <div class="admin-form-group">
-                    <label for="adminEmail">
-                        Admin Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="adminEmail"
-                        placeholder="Enter admin email"
-                        required
-                    >
+                <div class="admin-form-group" style="position: relative;">
+                    <label for="adminEmail">Admin Email</label>
+                    <div style="position: relative;">
+                        <i data-lucide="mail" style="position: absolute; left: 14px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                        <input type="email" id="adminEmail" placeholder="admin@university.edu" required style="padding-left: 40px;">
+                    </div>
                 </div>
 
-                <div class="admin-form-group">
-                    <label for="adminPassword">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="adminPassword"
-                        placeholder="Enter password"
-                        required
-                    >
+                <div class="admin-form-group" style="position: relative;">
+                    <label for="adminPassword">Password</label>
+                    <div style="position: relative;">
+                        <i data-lucide="lock" style="position: absolute; left: 14px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required style="padding-left: 40px;">
+                    </div>
                 </div>
 
-                <button
-                    type="submit"
-                    class="admin-login-btn"
-                >
-                    Login as Admin
+                <button type="submit" class="admin-login-btn" style="margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    Authenticate <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
                 </button>
-
             </form>
 
-            <a href="index.html" class="student-link">
-                ← Go to Student Login
+            <a href="index.html" class="student-link" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+                <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Go to Student Login
             </a>
 
         </div>
@@ -102,13 +87,13 @@
 
             <div class="admin-profile">
 
-                <div class="admin-avatar">
+                <div class="admin-avatar" id="adminAvatarText">
                     A
                 </div>
 
                 <div>
-                    <strong>Administrator</strong>
-                    <span>Campus Admin</span>
+                    <strong id="adminProfileName">Administrator</strong>
+                    <span id="adminProfileRole">Campus Admin</span>
                 </div>
 
             </div>
@@ -119,7 +104,7 @@
             <nav class="admin-nav">
 
                 <a
-                    href="#"
+                    href="#adminOverview"
                     class="active"
                     data-section="adminOverview"
                 >
@@ -127,10 +112,19 @@
                 </a>
 
                 <a
-                    href="#"
+                    href="#allComplaints"
                     data-section="allComplaints"
                 >
                      All Complaints
+                </a>
+
+                <a
+                    href="#manageAdmins"
+                    data-section="manageAdmins"
+                    id="manageAdminsNav"
+                    style="display: none;"
+                >
+                     Manage Admins 🛡️
                 </a>
 
             </nav>
@@ -426,6 +420,50 @@
 
             </section>
 
+            <!-- =========================
+                 MANAGE ADMINS SECTION (SUPER ADMIN ONLY)
+            ========================== -->
+            <section id="manageAdmins" style="display: none;">
+                <div class="admin-header">
+                    <div>
+                        <h1>Manage Admins</h1>
+                        <p>Create and revoke access for sub-admins</p>
+                    </div>
+                </div>
+
+                <div class="admin-section" style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    
+                    <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--admin-shadow-sm);">
+                        <h3 style="margin-bottom: 15px;">Create Sub-Admin</h3>
+                        <form id="createAdminForm">
+                            <div class="admin-form-group">
+                                <label>Name</label>
+                                <input type="text" id="newAdminName" placeholder="Admin Name" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Email</label>
+                                <input type="email" id="newAdminEmail" placeholder="admin@campuscare.com" required>
+                            </div>
+                            <div class="admin-form-group">
+                                <label>Password</label>
+                                <input type="password" id="newAdminPassword" placeholder="Secure password" required>
+                            </div>
+                            <button type="submit" class="admin-login-btn">
+                                Create Admin
+                            </button>
+                        </form>
+                    </div>
+
+                    <div style="flex: 2; min-width: 400px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--admin-shadow-sm);">
+                        <h3 style="margin-bottom: 15px;">Active Admins</h3>
+                        <div id="adminsList" style="display: flex; flex-direction: column; gap: 10px;">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
         </main>
 
     </div>
@@ -435,6 +473,7 @@
          JAVASCRIPT
     ========================== -->
 
+    <script src="ui.js"></script>
     <script src="admin.js"></script>
 
 </body>

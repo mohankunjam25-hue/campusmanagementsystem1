@@ -1,6 +1,7 @@
 const express = require("express");
-
 const router = express.Router();
+const { protect, admin } = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 const {
     createComplaint,
@@ -10,15 +11,15 @@ const {
 } = require("../controller/complaintController");
 
 // Create complaint
-router.post("/", createComplaint);
+router.post("/", protect, upload.single("image"), createComplaint);
 
 // Get all complaints
-router.get("/", getComplaints);
+router.get("/", protect, getComplaints);
 
 // Get single complaint
-router.get("/:id", getComplaintById);
+router.get("/:id", protect, getComplaintById);
 
 // Update complaint
-router.put("/:id", updateComplaint);
+router.put("/:id", protect, admin, updateComplaint);
 
 module.exports = router;
