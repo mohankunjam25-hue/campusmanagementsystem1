@@ -7,9 +7,14 @@ const connectDB = async () => {
         const mongoUri = process.env.MONGO_URI;
 
         if (!mongoUri) {
-            console.log("MongoDB URI missing. Starting in local fallback mode.");
-            isMongoConnected = false;
-            return false;
+            if (process.env.NODE_ENV === "production") {
+                console.error("FATAL ERROR: MONGO_URI is missing in production environment.");
+                process.exit(1);
+            } else {
+                console.log("MongoDB URI missing. Starting in local fallback mode.");
+                isMongoConnected = false;
+                return false;
+            }
         }
 
         await mongoose.connect(mongoUri);
@@ -18,10 +23,15 @@ const connectDB = async () => {
         console.log("MongoDB connected successfully");
         return true;
     } catch (error) {
-        isMongoConnected = false;
-        console.log("MongoDB connection failed:", error.message);
-        console.log("Starting in local fallback mode.");
-        return false;
+        if (process.env.NODE_ENV === "production") {
+            console.error("FATAL ERROR: MongoDB connection failed in production:", error.message);
+            process.exit(1);
+        } else {
+            isMongoConnected = false;
+            console.log("MongoDB connection failed:", error.message);
+            console.log("Starting in local fallback mode.");
+            return false;
+        }
     }
 };
 

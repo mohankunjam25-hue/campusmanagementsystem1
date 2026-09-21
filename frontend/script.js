@@ -1,7 +1,7 @@
 let currentUser = JSON.parse(localStorage.getItem("campusUser"));
 let userToken = localStorage.getItem("campusToken");
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "/api";
 
 // Helper to get auth headers
 function getAuthHeaders() {
