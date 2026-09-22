@@ -13,15 +13,16 @@ const app = express();
 const frontendPath = path.join(__dirname, "..", "frontend");
 
 // 1. Security HTTP headers
-app.use(helmet());
-// Allow images from anywhere since it might load external images or data URIs
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "*"],
-        connectSrc: ["'self'", "*"]
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+            imgSrc: ["'self'", "data:", "*"],
+            connectSrc: ["'self'", "*"]
+        }
     }
 }));
 
@@ -68,7 +69,7 @@ app.get("/api", (req, res) => {
 app.use("/api/complaints", complaintRoutes);
 app.use("/api/users", userRoutes);
 
-app.get("*", (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(frontendPath, "index.html"));
 });
 
