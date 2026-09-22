@@ -7,6 +7,7 @@
     <title>CampusCare - Complaint Management System</title>
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ui.css">
 </head>
@@ -37,7 +38,7 @@
                 </div>
             </div>
 
-            <div class="form-group" style="position: relative;">
+            <div class="form-group" style="position: relative; margin-bottom: 8px;">
                 <label for="password">Password</label>
                 <div style="position: relative;">
                     <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
@@ -45,17 +46,27 @@
                 </div>
             </div>
 
-            <button type="submit" class="primary-btn" style="margin-top: 10px;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+                <a href="#" id="forgotPasswordLink" style="font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 500; transition: color 0.2s ease;">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="primary-btn" style="width: 100%;">
                 Sign In <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
             </button>
         </form>
+
+        <div class="auth-divider">
+            <span>or continue with</span>
+        </div>
+
+        <div id="googleSignInBtn" class="google-auth-container"></div>
 
         <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
             <span style="color: #64748b;">Don't have an account?</span>
             <a href="#" id="registerBtn" style="color: #2563eb; font-weight: 600; text-decoration: none;">Sign up</a>
         </div>
 
-        <div class="admin-login-box" style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 25px;">
+        <div class="admin-login-box" style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
             <a href="admin.html" id="adminLoginBtn" style="color: #64748b; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 4px;">
                 <i data-lucide="shield" style="width:14px;height:14px;"></i> Login as Administrator
             </a>
@@ -109,10 +120,16 @@
                 </div>
             </div>
 
-            <button type="submit" class="primary-btn" style="margin-top: 10px;">
+            <button type="submit" class="primary-btn" style="width: 100%;">
                 Sign Up <i data-lucide="user-plus" style="width:16px;height:16px;"></i>
             </button>
         </form>
+
+        <div class="auth-divider">
+            <span>or sign up with</span>
+        </div>
+
+        <div id="googleSignUpBtn" class="google-auth-container"></div>
 
         <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
             <span style="color: #64748b;">Already have an account?</span>
@@ -197,6 +214,16 @@
             >
                 <i data-lucide="plus-circle" style="width:18px;height:18px;"></i>
                 New Complaint
+            </a>
+
+            <a
+                class="nav-link"
+                href="#security"
+                data-section="security"
+                style="display:flex; align-items:center; gap:10px; width:100%; text-align:left; padding: 12px 14px; text-decoration: none;"
+            >
+                <i data-lucide="shield-check" style="width:18px;height:18px;"></i>
+                Security & Password
             </a>
 
         </nav>
@@ -611,6 +638,98 @@
 
         </section>
 
+        <!-- ================= SECURITY & PASSWORD ================= -->
+
+        <section
+            id="securitySection"
+            class="dashboard-section hidden"
+        >
+
+            <div class="form-container" style="max-width: 650px;">
+
+                <div class="form-header" style="margin-bottom: 24px;">
+                    <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">Security & Password</h2>
+                    <p style="color: #64748b; font-size: 14px;">Update your password and verify your credentials using Email OTP security.</p>
+                </div>
+
+                <div class="security-card" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px;">Registered Student Email</div>
+                            <div id="securityAccountEmail" style="font-size: 15px; font-weight: 600; color: #0f172a; margin-top: 4px;">student@university.edu</div>
+                        </div>
+                        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #dcfce7; color: #15803d;">
+                            <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Verified Account
+                        </span>
+                    </div>
+                </div>
+
+                <form id="changePasswordForm">
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <i data-lucide="mail-check" style="width: 20px; height: 20px; color: #2563eb; flex-shrink: 0; margin-top: 2px;"></i>
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 4px 0; font-size: 14px; color: #1e40af; font-weight: 600;">Email OTP Verification</h4>
+                                <p style="margin: 0 0 12px 0; font-size: 13px; color: #3b82f6; line-height: 1.4;">
+                                    Click below to send a 6-digit verification code to your registered email to safely authorize password update.
+                                </p>
+                                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                                    <button type="button" id="sendChangeOtpBtn" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; background: #ffffff; border: 1px solid #93c5fd; color: #1d4ed8;">
+                                        <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+                                        <span>Send OTP to My Email</span>
+                                    </button>
+                                    <span id="changeOtpStatus" style="font-size: 13px; font-weight: 600; color: #16a34a; display: none;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="changeOtpDevBanner" class="otp-notice-banner hidden" style="margin-bottom: 20px;"></div>
+
+                    <div class="form-group" style="position: relative;">
+                        <label for="changeOtpInput">6-Digit Email OTP</label>
+                        <div style="position: relative;">
+                            <i data-lucide="key" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                            <input type="text" id="changeOtpInput" maxlength="6" placeholder="Enter 6-digit OTP code" style="padding-left: 38px; font-family: monospace; letter-spacing: 2px; font-weight: 600;">
+                        </div>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px; display: block;">Or enter your Current Password below if not using email OTP</small>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <label for="changeCurrentPassword">Current Password (Optional if OTP is entered)</label>
+                        <div style="position: relative;">
+                            <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                            <input type="password" id="changeCurrentPassword" placeholder="Current password" style="padding-left: 38px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <label for="changeNewPassword">New Password</label>
+                        <div style="position: relative;">
+                            <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                            <input type="password" id="changeNewPassword" placeholder="Minimum 6 characters" required style="padding-left: 38px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="position: relative;">
+                        <label for="changeConfirmPassword">Confirm New Password</label>
+                        <div style="position: relative;">
+                            <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                            <input type="password" id="changeConfirmPassword" placeholder="Re-enter new password" required style="padding-left: 38px;">
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 25px;">
+                        <button type="submit" class="primary-btn" id="updatePasswordBtn">
+                            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i> Update Password
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+
+        </section>
+
     </main>
 
 </section>
@@ -634,6 +753,98 @@
 
 
         <div id="modalContent"></div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FORGOT PASSWORD / OTP MODAL ================= -->
+
+<div
+    id="forgotPasswordModal"
+    class="modal hidden"
+>
+
+    <div class="modal-content auth-modal-box">
+
+        <button
+            id="closeForgotModal"
+            class="close-modal"
+        >
+            &times;
+        </button>
+
+        <!-- Step 1: Request OTP -->
+        <div id="forgotStep1">
+            <div class="auth-modal-header">
+                <div class="auth-icon-circle">
+                    <i data-lucide="key-round" style="width: 24px; height: 24px; color: #2563eb;"></i>
+                </div>
+                <h3>Reset Password</h3>
+                <p>Enter your student email address to receive a 6-digit verification code.</p>
+            </div>
+
+            <form id="forgotEmailForm">
+                <div class="form-group" style="position: relative;">
+                    <label for="forgotEmail">Email address</label>
+                    <div style="position: relative;">
+                        <i data-lucide="mail" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                        <input type="email" id="forgotEmail" placeholder="student@university.edu" required style="padding-left: 38px;">
+                    </div>
+                </div>
+
+                <button type="submit" id="sendOtpBtn" class="primary-btn" style="width: 100%; margin-top: 10px;">
+                    <span>Send Verification OTP</span>
+                    <i data-lucide="send" style="width:16px;height:16px;"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 2: Enter OTP & New Password -->
+        <div id="forgotStep2" class="hidden">
+            <div class="auth-modal-header">
+                <div class="auth-icon-circle success-circle">
+                    <i data-lucide="shield-check" style="width: 24px; height: 24px; color: #16a34a;"></i>
+                </div>
+                <h3>Enter Verification Code</h3>
+                <p>We've dispatched a 6-digit verification code to <strong id="sentOtpEmail"></strong></p>
+            </div>
+
+            <div id="forgotOtpDevBanner" class="otp-notice-banner hidden"></div>
+
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="resetOtpCode">6-Digit OTP Code</label>
+                    <input type="text" id="resetOtpCode" maxlength="6" pattern="[0-9]{6}" placeholder="• • • • • •" required class="otp-input-field">
+                </div>
+
+                <div class="form-group" style="position: relative;">
+                    <label for="resetNewPassword">New Password</label>
+                    <div style="position: relative;">
+                        <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                        <input type="password" id="resetNewPassword" placeholder="Minimum 6 characters" required style="padding-left: 38px;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="position: relative;">
+                    <label for="resetConfirmPassword">Confirm New Password</label>
+                    <div style="position: relative;">
+                        <i data-lucide="lock" style="position: absolute; left: 12px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
+                        <input type="password" id="resetConfirmPassword" placeholder="Confirm new password" required style="padding-left: 38px;">
+                    </div>
+                </div>
+
+                <button type="submit" id="submitResetBtn" class="primary-btn" style="width: 100%; margin-top: 10px;">
+                    <span>Set New Password</span>
+                    <i data-lucide="check-circle" style="width:16px;height:16px;"></i>
+                </button>
+
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" id="resendOtpBtn" style="font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 500;">Didn't receive code? Resend OTP</a>
+                </div>
+            </form>
+        </div>
 
     </div>
 
