@@ -3,476 +3,609 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - CampusCare</title>
 
-    <title>Admin Dashboard - Campus Care</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="ui.css">
 </head>
-
 <body>
 
-    <!-- =========================
-         ADMIN LOGIN
-    ========================== -->
-
+    <!-- =========================================================
+         ADMIN LOGIN PAGE
+    ========================================================== -->
     <div class="admin-login-page" id="adminLogin">
-
         <div class="admin-login-card">
-
-            <div class="admin-logo" style="display:flex; flex-direction:column; align-items:center;">
-                <i data-lucide="shield-check" style="width:40px;height:40px;color:#2563eb;margin-bottom:10px;"></i>
-                <h1>Admin Login</h1>
-                <p>Campus Care Management System</p>
+            <div class="admin-logo">
+                <div class="logo-icon-wrap">
+                    <i data-lucide="shield-check" class="brand-shield-icon"></i>
+                </div>
+                <h1>CampusCare Admin</h1>
+                <p>Operations &amp; Complaint Management Console</p>
             </div>
 
             <form id="adminLoginForm">
-                <div class="admin-form-group" style="position: relative;">
-                    <label for="adminEmail">Admin Email</label>
-                    <div style="position: relative;">
-                        <i data-lucide="mail" style="position: absolute; left: 14px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
-                        <input type="email" id="adminEmail" placeholder="admin@university.edu" required style="padding-left: 40px;">
+                <div class="admin-form-group">
+                    <label for="adminEmail">Admin Work Email</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="mail"></i>
+                        <input type="email" id="adminEmail" placeholder="admin@campuscare.com" required autocomplete="email">
                     </div>
                 </div>
 
-                <div class="admin-form-group" style="position: relative;">
+                <div class="admin-form-group">
                     <label for="adminPassword">Password</label>
-                    <div style="position: relative;">
-                        <i data-lucide="lock" style="position: absolute; left: 14px; top: 14px; width: 18px; height: 18px; color: #94a3b8;"></i>
-                        <input type="password" id="adminPassword" placeholder="••••••••" required style="padding-left: 40px;">
+                    <div class="input-with-icon">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="adminPassword" placeholder="••••••••" required autocomplete="current-password">
                     </div>
                 </div>
 
-                <button type="submit" class="admin-login-btn" style="margin-top: 10px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                    Authenticate <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+                <button type="submit" class="admin-login-btn">
+                    <span>Authenticate Console</span>
+                    <i data-lucide="arrow-right"></i>
                 </button>
             </form>
 
-            <a href="index.html" class="student-link" style="display:flex; align-items:center; justify-content:center; gap:6px;">
-                <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Go to Student Login
+            <a href="index.html" class="student-link">
+                <i data-lucide="arrow-left"></i>
+                <span>Switch to Student Portal</span>
             </a>
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         ADMIN DASHBOARD WRAPPER
+    ========================================================== -->
+    <div class="admin-dashboard" id="adminDashboard" style="display: none;">
+
+        <!-- Mobile Backdrop Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- =========================================================
+             SIDEBAR
+        ========================================================== -->
+        <aside class="admin-sidebar" id="adminSidebar" aria-label="Admin Navigation">
+            
+            <!-- Sidebar Header / Brand -->
+            <div class="sidebar-header">
+                <div class="brand-box">
+                    <div class="brand-logo">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+                    <div class="brand-meta">
+                        <h2>CampusCare</h2>
+                        <span class="badge-tag">Operations Console</span>
+                    </div>
+                </div>
+                <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar (Ctrl+B)" aria-label="Toggle Sidebar Navigation">
+                    <i data-lucide="chevrons-left"></i>
+                </button>
+            </div>
+
+            <!-- Sidebar Navigation Menu -->
+            <div class="sidebar-content">
+                
+                <!-- Group 1: CORE -->
+                <div class="nav-group">
+                    <span class="nav-group-title">MAIN MENU</span>
+                    <nav class="admin-nav">
+                        <a href="#adminOverview" class="nav-item active" data-section="adminOverview">
+                            <span class="nav-icon-wrap"><i data-lucide="layout-dashboard"></i></span>
+                            <span class="nav-text">Dashboard</span>
+                            <span class="nav-tooltip">Dashboard Overview</span>
+                        </a>
+                        <a href="#allComplaints" class="nav-item" data-section="allComplaints">
+                            <span class="nav-icon-wrap"><i data-lucide="inbox"></i></span>
+                            <span class="nav-text">All Complaints</span>
+                            <span class="nav-badge" id="sidebarPendingBadge" style="display: none;">0</span>
+                            <span class="nav-tooltip">Complaints Queue</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Group 2: ADMINISTRATION (Super Admin Only) -->
+                <div class="nav-group" id="manageAdminsNavGroup" style="display: none;">
+                    <span class="nav-group-title">ADMINISTRATION</span>
+                    <nav class="admin-nav">
+                        <a href="#manageAdmins" class="nav-item" data-section="manageAdmins" id="manageAdminsNav">
+                            <span class="nav-icon-wrap"><i data-lucide="users"></i></span>
+                            <span class="nav-text">Manage Admins</span>
+                            <span class="role-pill">Super</span>
+                            <span class="nav-tooltip">Manage Staff Admins</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Group 3: QUICK LINKS -->
+                <div class="nav-group">
+                    <span class="nav-group-title">EXTERNAL</span>
+                    <nav class="admin-nav">
+                        <a href="index.html" class="nav-item" target="_blank" rel="noopener">
+                            <span class="nav-icon-wrap"><i data-lucide="external-link"></i></span>
+                            <span class="nav-text">Student Portal</span>
+                            <span class="nav-tooltip">Launch Student Portal</span>
+                        </a>
+                    </nav>
+                </div>
+
+            </div>
+
+            <!-- Sidebar Footer / Admin Profile & Logout -->
+            <div class="sidebar-footer">
+                <div class="admin-profile-card">
+                    <div class="admin-avatar-wrap">
+                        <div class="admin-avatar" id="adminAvatarText">A</div>
+                        <span class="avatar-online-dot" title="Active Administrator"></span>
+                    </div>
+                    <div class="admin-profile-info">
+                        <strong id="adminProfileName">Administrator</strong>
+                        <span class="role-indicator" id="adminProfileRole">Campus Admin</span>
+                    </div>
+                    <button class="logout-mini-btn" id="adminLogout" title="Sign out of console" aria-label="Sign out">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                    <span class="nav-tooltip profile-tooltip">Account &amp; Logout</span>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <!-- =========================================================
+             MAIN VIEWPORT
+        ========================================================== -->
+        <div class="admin-viewport">
+
+            <!-- =====================================================
+                 TOP APP HEADER BAR
+            ====================================================== -->
+            <header class="admin-topbar">
+                
+                <div class="topbar-left">
+                    <button class="mobile-toggle-btn" id="mobileSidebarToggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="topbar-breadcrumbs">
+                        <span class="crumb-root">Admin Console</span>
+                        <i data-lucide="chevron-right" class="crumb-separator"></i>
+                        <span class="crumb-active" id="topbarCurrentView">Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Global Search shortcut -->
+                    <div class="topbar-search">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="topbarSearchInput" placeholder="Quick search complaints...">
+                        <kbd class="shortcut-key">Ctrl+K</kbd>
+                    </div>
+
+                    <!-- Live Refresh Button -->
+                    <button class="topbar-btn" id="refreshDataBtn" title="Sync live data">
+                        <i data-lucide="refresh-cw" id="refreshIcon"></i>
+                        <span class="topbar-btn-text">Sync</span>
+                    </button>
+
+                    <!-- Status Notification Indicator -->
+                    <div class="status-indicator-pill" id="liveConnectionBadge">
+                        <span class="status-dot pulsing"></span>
+                        <span class="status-text">System Live</span>
+                    </div>
+                </div>
+
+            </header>
+
+
+            <!-- =====================================================
+                 MAIN CONTENT BODY
+            ====================================================== -->
+            <main class="admin-main">
+
+                <!-- =================================================
+                     SECTION 1: DASHBOARD OVERVIEW
+                ================================================== -->
+                <section id="adminOverview" class="admin-page-section">
+
+                    <!-- Section Banner -->
+                    <div class="dashboard-hero">
+                        <div class="hero-text">
+                            <h1>Operations Command Center</h1>
+                            <p>Real-time overview of student reports, response velocity, and campus facilities status.</p>
+                        </div>
+                        <div class="hero-actions">
+                            <a href="#allComplaints" class="hero-cta-btn">
+                                <i data-lucide="inbox"></i>
+                                <span>Review Open Queue</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- KPI / Stat Cards (Clickable) -->
+                    <div class="kpi-stats-grid">
+                        
+                        <!-- Total -->
+                        <div class="kpi-card kpi-total" data-filter="all" title="View all complaints">
+                            <div class="kpi-icon-wrap">
+                                <i data-lucide="layers"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Total Submissions</span>
+                                <h2 class="kpi-value" id="adminTotal">0</h2>
+                                <span class="kpi-hint">All time filed</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Pending -->
+                        <div class="kpi-card kpi-pending" data-filter="Pending" title="Filter to Pending complaints">
+                            <div class="kpi-icon-wrap">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Needs Attention</span>
+                                <h2 class="kpi-value" id="adminPending">0</h2>
+                                <span class="kpi-hint text-warning">Awaiting triage</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- In Progress -->
+                        <div class="kpi-card kpi-progress" data-filter="In Progress" title="Filter to In Progress complaints">
+                            <div class="kpi-icon-wrap">
+                                <i data-lucide="loader"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Under Investigation</span>
+                                <h2 class="kpi-value" id="adminProgress">0</h2>
+                                <span class="kpi-hint text-info">Assigned to team</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                        <!-- Resolved -->
+                        <div class="kpi-card kpi-resolved" data-filter="Resolved" title="Filter to Resolved complaints">
+                            <div class="kpi-icon-wrap">
+                                <i data-lucide="check-circle-2"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Resolved Issues</span>
+                                <h2 class="kpi-value" id="adminResolved">0</h2>
+                                <span class="kpi-hint text-success">Completed</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Recent Activity Section -->
+                    <div class="admin-panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Recent Inflow Activity</h2>
+                                <p>Latest complaints logged across hostels and campus departments</p>
+                            </div>
+                            <a href="#allComplaints" class="panel-link">
+                                <span>Browse complete queue</span>
+                                <i data-lucide="arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <div class="admin-complaint-list" id="adminRecentComplaints">
+                            <!-- Populated via JavaScript -->
+                        </div>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     SECTION 2: ALL COMPLAINTS QUEUE
+                ================================================== -->
+                <section id="allComplaints" class="admin-page-section" style="display: none;">
+
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Complaint Management Queue</h1>
+                            <p>Filter, inspect evidence photos, and update resolution lifecycle states</p>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Toolbar Bar -->
+                    <div class="queue-toolbar">
+                        
+                        <!-- Status Tabs -->
+                        <div class="status-tab-group">
+                            <button class="status-tab active" data-status="all">
+                                <span>All</span>
+                                <span class="tab-badge" id="tabCountAll">0</span>
+                            </button>
+                            <button class="status-tab" data-status="Pending">
+                                <span class="tab-dot dot-pending"></span>
+                                <span>Pending</span>
+                                <span class="tab-badge" id="tabCountPending">0</span>
+                            </button>
+                            <button class="status-tab" data-status="In Progress">
+                                <span class="tab-dot dot-progress"></span>
+                                <span>In Progress</span>
+                                <span class="tab-badge" id="tabCountProgress">0</span>
+                            </button>
+                            <button class="status-tab" data-status="Resolved">
+                                <span class="tab-dot dot-resolved"></span>
+                                <span>Resolved</span>
+                                <span class="tab-badge" id="tabCountResolved">0</span>
+                            </button>
+                        </div>
+
+                        <!-- Secondary Filters & View Switcher -->
+                        <div class="filter-controls">
+                            
+                            <!-- Search -->
+                            <div class="filter-search-box">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="adminSearch" placeholder="Search by title, student, or detail...">
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="filter-select-box">
+                                <i data-lucide="tag"></i>
+                                <select id="adminCategory">
+                                    <option value="all">All Categories</option>
+                                    <option value="Electricity">Electricity</option>
+                                    <option value="Water">Water</option>
+                                    <option value="Internet">Internet</option>
+                                    <option value="Cleaning">Cleaning</option>
+                                    <option value="Hostel">Hostel</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Washroom">Washroom</option>
+                                    <option value="Food">Food / Mess</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Hidden original status select for backwards compatibility -->
+                            <select id="adminStatus" style="display: none;">
+                                <option value="all">All</option>
+                                <option value="Pending">Pending</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+
+                            <!-- View Mode Switcher (Table vs Grid Cards) -->
+                            <div class="view-mode-toggle">
+                                <button class="mode-btn active" id="viewTableBtn" title="Dense Table View">
+                                    <i data-lucide="table"></i>
+                                </button>
+                                <button class="mode-btn" id="viewCardsBtn" title="Cards Grid View">
+                                    <i data-lucide="layout-grid"></i>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Complaints Content Containers -->
+                    <!-- 1. Table View Container -->
+                    <div class="table-view-card" id="adminComplaintTableWrap">
+                        <div class="table-responsive">
+                            <table class="modern-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Complaint / Title</th>
+                                        <th>Student / Reporter</th>
+                                        <th>Category</th>
+                                        <th>Location</th>
+                                        <th>Submitted</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminComplaintTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. Cards Grid Container (Alternative View) -->
+                    <div class="admin-complaint-list" id="adminComplaintList" style="display: none;">
+                        <!-- Populated via JS -->
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     SECTION 3: MANAGE ADMINS (SUPER ADMIN ONLY)
+                ================================================== -->
+                <section id="manageAdmins" class="admin-page-section" style="display: none;">
+
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Administrator Access Control</h1>
+                            <p>Provision campus staff credentials and revoke administrative roles</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-split-layout">
+                        
+                        <!-- Create Sub-Admin Form Card -->
+                        <div class="panel-form-card">
+                            <div class="card-title-group">
+                                <div class="card-icon">
+                                    <i data-lucide="user-plus"></i>
+                                </div>
+                                <div>
+                                    <h3>Provision New Admin</h3>
+                                    <p>Assign administrative rights to campus staff</p>
+                                </div>
+                            </div>
+
+                            <form id="createAdminForm" class="modern-admin-form">
+                                <div class="admin-form-group">
+                                    <label for="newAdminName">Staff Full Name</label>
+                                    <div class="input-with-icon">
+                                        <i data-lucide="user"></i>
+                                        <input type="text" id="newAdminName" placeholder="e.g. Dr. Rajesh Sharma" required>
+                                    </div>
+                                </div>
+
+                                <div class="admin-form-group">
+                                    <label for="newAdminEmail">Institutional Email</label>
+                                    <div class="input-with-icon">
+                                        <i data-lucide="mail"></i>
+                                        <input type="email" id="newAdminEmail" placeholder="r.sharma@campuscare.com" required>
+                                    </div>
+                                </div>
+
+                                <div class="admin-form-group">
+                                    <label for="newAdminPassword">Temporary Password</label>
+                                    <div class="input-with-icon">
+                                        <i data-lucide="key-round"></i>
+                                        <input type="password" id="newAdminPassword" placeholder="Minimum 6 characters" required>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="primary-action-btn">
+                                    <i data-lucide="shield-plus"></i>
+                                    <span>Grant Admin Access</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Active Admins Directory Card -->
+                        <div class="panel-directory-card">
+                            <div class="card-title-group">
+                                <div class="card-icon">
+                                    <i data-lucide="shield"></i>
+                                </div>
+                                <div>
+                                    <h3>Active Administrators</h3>
+                                    <p>Currently authorized staff accounts</p>
+                                </div>
+                            </div>
+
+                            <div class="admins-directory-list" id="adminsList">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </main>
 
         </div>
 
     </div>
 
 
-    <!-- =========================
-         ADMIN DASHBOARD
-    ========================== -->
-
-    <div
-        class="admin-dashboard"
-        id="adminDashboard"
-        style="display: none;"
-    >
-
-        <!-- =========================
-             SIDEBAR
-        ========================== -->
-
-        <aside class="admin-sidebar">
-
-            <div class="admin-brand">
-
-                <h2>Campus Care</h2>
-
-                <p>Admin Panel</p>
-
-            </div>
-
-
-            <!-- Admin Profile -->
-
-            <div class="admin-profile">
-
-                <div class="admin-avatar" id="adminAvatarText">
-                    A
+    <!-- =========================================================
+         STATUS UPDATE & RESOLUTION MODAL
+    ========================================================== -->
+    <div class="modal-overlay hidden" id="resolutionModal">
+        <div class="modal-dialog">
+            
+            <div class="modal-header">
+                <div class="modal-header-title">
+                    <span class="modal-pretitle">Complaint Triage &amp; Resolution</span>
+                    <h3 id="modalComplaintTitle">Issue Title</h3>
                 </div>
-
-                <div>
-                    <strong id="adminProfileName">Administrator</strong>
-                    <span id="adminProfileRole">Campus Admin</span>
-                </div>
-
-            </div>
-
-
-            <!-- Navigation -->
-
-            <nav class="admin-nav">
-
-                <a
-                    href="#adminOverview"
-                    class="active"
-                    data-section="adminOverview"
-                >
-                     Dashboard
-                </a>
-
-                <a
-                    href="#allComplaints"
-                    data-section="allComplaints"
-                >
-                     All Complaints
-                </a>
-
-                <a
-                    href="#manageAdmins"
-                    data-section="manageAdmins"
-                    id="manageAdminsNav"
-                    style="display: none;"
-                >
-                     Manage Admins 🛡️
-                </a>
-
-            </nav>
-
-
-            <!-- Logout -->
-
-            <div class="admin-logout">
-
-                <button id="adminLogout">
-                     Logout
+                <button class="modal-close-btn" id="closeResolutionModal" aria-label="Close dialog">
+                    <i data-lucide="x"></i>
                 </button>
+            </div>
+
+            <div class="modal-body">
+                
+                <!-- Reporter & Meta Grid -->
+                <div class="modal-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label"><i data-lucide="user"></i> Student</span>
+                        <strong class="meta-value" id="modalReporter">Student Name</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i data-lucide="folder"></i> Category</span>
+                        <strong class="meta-value" id="modalCategory">Category</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i data-lucide="map-pin"></i> Location</span>
+                        <strong class="meta-value" id="modalLocation">Location</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label"><i data-lucide="calendar"></i> Filed On</span>
+                        <strong class="meta-value" id="modalDate">Date</strong>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="modal-section-box">
+                    <span class="section-label">Complaint Description:</span>
+                    <p class="section-text" id="modalDescription"></p>
+                </div>
+
+                <!-- Attached Photo Evidence Preview -->
+                <div class="modal-image-preview" id="modalImageWrap" style="display: none;">
+                    <span class="section-label">Attached Photo Evidence:</span>
+                    <a id="modalImageLink" href="#" target="_blank" title="Click to view full image">
+                        <img id="modalImagePreview" src="" alt="Complaint Evidence Photo">
+                    </a>
+                </div>
+
+                <!-- Update Form -->
+                <form id="resolutionForm" class="resolution-form">
+                    <input type="hidden" id="modalComplaintId">
+
+                    <div class="admin-form-group">
+                        <label for="modalStatusSelect">Update Lifecycle State</label>
+                        <select id="modalStatusSelect" class="modern-select">
+                            <option value="Pending">Pending (Needs Attention)</option>
+                            <option value="In Progress">In Progress (Work Assigned)</option>
+                            <option value="Resolved">Resolved (Work Completed)</option>
+                        </select>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="modalResolutionNotes">Resolution Note / Remarks for Student</label>
+                        <textarea id="modalResolutionNotes" rows="3" placeholder="Provide action notes (e.g. 'Electrician dispatched to hostel block A. Faulty wiring replaced. Issue closed.')"></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="cancelResolutionBtn">Cancel</button>
+                        <button type="submit" class="btn-primary" id="saveResolutionBtn">
+                            <i data-lucide="check"></i>
+                            <span>Save &amp; Notify Student</span>
+                        </button>
+                    </div>
+                </form>
 
             </div>
 
-        </aside>
-
-
-        <!-- =========================
-             MAIN CONTENT
-        ========================== -->
-
-        <main class="admin-main">
-
-
-            <!-- =========================
-                 DASHBOARD SECTION
-            ========================== -->
-
-            <section id="adminOverview">
-
-                <div class="admin-header">
-
-                    <div>
-
-                        <h1>Admin Dashboard</h1>
-
-                        <p>
-                            Manage and monitor campus complaints
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =========================
-                     STAT CARDS
-                ========================== -->
-
-                <div class="admin-stats">
-
-                    <!-- Total -->
-
-                    <div class="admin-stat-card">
-
-                        <div class="admin-stat-top">
-
-                            <h3>Total Complaints</h3>
-
-                            <div class="stat-icon">
-                                
-                            </div>
-
-                        </div>
-
-                        <div
-                            class="number"
-                            id="adminTotal"
-                        >
-                            0
-                        </div>
-
-                    </div>
-
-
-                    <!-- Pending -->
-
-                    <div class="admin-stat-card">
-
-                        <div class="admin-stat-top">
-
-                            <h3>Pending</h3>
-
-                            <div class="stat-icon">
-                                
-                            </div>
-
-                        </div>
-
-                        <div
-                            class="number"
-                            id="adminPending"
-                        >
-                            0
-                        </div>
-
-                    </div>
-
-
-                    <!-- In Progress -->
-
-                    <div class="admin-stat-card">
-
-                        <div class="admin-stat-top">
-
-                            <h3>In Progress</h3>
-
-                            <div class="stat-icon">
-                                
-                            </div>
-
-                        </div>
-
-                        <div
-                            class="number"
-                            id="adminProgress"
-                        >
-                            0
-                        </div>
-
-                    </div>
-
-
-                    <!-- Resolved -->
-
-                    <div class="admin-stat-card">
-
-                        <div class="admin-stat-top">
-
-                            <h3>Resolved</h3>
-
-                            <div class="stat-icon">
-                                
-                            </div>
-
-                        </div>
-
-                        <div
-                            class="number"
-                            id="adminResolved"
-                        >
-                            0
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =========================
-                     RECENT COMPLAINTS
-                ========================== -->
-
-                <div class="admin-section">
-
-                    <div class="admin-section-header">
-
-                        <h2>Recent Complaints</h2>
-
-                        <p>
-                            Latest complaints submitted by students
-                        </p>
-
-                    </div>
-
-                    <div
-                        class="admin-complaint-list"
-                        id="adminRecentComplaints"
-                    >
-
-                        <!-- JavaScript will add complaints here -->
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            <!-- =========================
-                 ALL COMPLAINTS SECTION
-            ========================== -->
-
-            <section
-                id="allComplaints"
-                style="display: none;"
-            >
-
-                <div class="admin-header">
-
-                    <div>
-
-                        <h1>All Complaints</h1>
-
-                        <p>
-                            View and manage all student complaints
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="admin-section">
-
-                    <!-- Filters -->
-
-                    <div class="admin-filter">
-
-                        <input
-                            type="text"
-                            id="adminSearch"
-                            placeholder="🔍 Search complaints..."
-                        >
-
-                        <select id="adminStatus">
-
-                            <option value="all">
-                                All Status
-                            </option>
-
-                            <option value="Pending">
-                                Pending
-                            </option>
-
-                            <option value="In Progress">
-                                In Progress
-                            </option>
-
-                            <option value="Resolved">
-                                Resolved
-                            </option>
-
-                        </select>
-
-
-                        <select id="adminCategory">
-
-                            <option value="all">
-                                All Categories
-                            </option>
-
-                            <option value="Electricity">
-                                Electricity
-                            </option>
-
-                            <option value="Water">
-                                Water
-                            </option>
-
-                            <option value="Internet">
-                                Internet
-                            </option>
-
-                            <option value="Cleaning">
-                                Cleaning
-                            </option>
-
-                            <option value="Hostel">
-                                Hostel
-                            </option>
-
-                            <option value="Furniture">
-                                Furniture
-                            </option>
-
-                            <option value="Washroom">
-                                Washroom
-                            </option>
-
-                            <option value="Other">
-                                Other
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- Complaint List -->
-
-                    <div
-                        class="admin-complaint-list"
-                        id="adminComplaintList"
-                    >
-
-                        <!-- Complaints will come from JavaScript -->
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- =========================
-                 MANAGE ADMINS SECTION (SUPER ADMIN ONLY)
-            ========================== -->
-            <section id="manageAdmins" style="display: none;">
-                <div class="admin-header">
-                    <div>
-                        <h1>Manage Admins</h1>
-                        <p>Create and revoke access for sub-admins</p>
-                    </div>
-                </div>
-
-                <div class="admin-section" style="display: flex; gap: 20px; flex-wrap: wrap;">
-                    
-                    <div style="flex: 1; min-width: 300px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--admin-shadow-sm);">
-                        <h3 style="margin-bottom: 15px;">Create Sub-Admin</h3>
-                        <form id="createAdminForm">
-                            <div class="admin-form-group">
-                                <label>Name</label>
-                                <input type="text" id="newAdminName" placeholder="Admin Name" required>
-                            </div>
-                            <div class="admin-form-group">
-                                <label>Email</label>
-                                <input type="email" id="newAdminEmail" placeholder="admin@campuscare.com" required>
-                            </div>
-                            <div class="admin-form-group">
-                                <label>Password</label>
-                                <input type="password" id="newAdminPassword" placeholder="Secure password" required>
-                            </div>
-                            <button type="submit" class="admin-login-btn">
-                                Create Admin
-                            </button>
-                        </form>
-                    </div>
-
-                    <div style="flex: 2; min-width: 400px; background: white; padding: 20px; border-radius: 12px; box-shadow: var(--admin-shadow-sm);">
-                        <h3 style="margin-bottom: 15px;">Active Admins</h3>
-                        <div id="adminsList" style="display: flex; flex-direction: column; gap: 10px;">
-                            <!-- populated by JS -->
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
-
+        </div>
     </div>
 
 
-    <!-- =========================
-         JAVASCRIPT
-    ========================== -->
-
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================== -->
     <script src="ui.js"></script>
     <script src="admin.js"></script>
 

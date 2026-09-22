@@ -1,24 +1,66 @@
-// ================================
-// CAMPUS CARE - ADMIN JS
-// ================================
+// =========================================================
+// CAMPUSCARE - ADMIN DASHBOARD & SIDEBAR CONTROLLER (2026)
+// =========================================================
 
 const API_URL = "/api";
 let adminToken = sessionStorage.getItem("adminToken");
+let allComplaintsCache = [];
+let currentFilterStatus = "all";
+let currentViewMode = localStorage.getItem("adminViewMode") || "table";
 
-// ================================
-// ELEMENTS
-// ================================
+// =========================================================
+// DOM ELEMENTS
+// =========================================================
 
 const adminLogin = document.getElementById("adminLogin");
 const adminDashboard = document.getElementById("adminDashboard");
-
 const adminLoginForm = document.getElementById("adminLoginForm");
 const adminEmail = document.getElementById("adminEmail");
 const adminPassword = document.getElementById("adminPassword");
-
 const adminLogout = document.getElementById("adminLogout");
 
-// Helper
+// Sidebar & Layout
+const adminSidebar = document.getElementById("adminSidebar");
+const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
+const mobileSidebarToggle = document.getElementById("mobileSidebarToggle");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
+const sidebarPendingBadge = document.getElementById("sidebarPendingBadge");
+const manageAdminsNavGroup = document.getElementById("manageAdminsNavGroup");
+const manageAdminsNav = document.getElementById("manageAdminsNav");
+
+// Topbar
+const topbarCurrentView = document.getElementById("topbarCurrentView");
+const topbarSearchInput = document.getElementById("topbarSearchInput");
+const refreshDataBtn = document.getElementById("refreshDataBtn");
+const refreshIcon = document.getElementById("refreshIcon");
+
+// View Toggle & Filters
+const viewTableBtn = document.getElementById("viewTableBtn");
+const viewCardsBtn = document.getElementById("viewCardsBtn");
+const adminComplaintTableWrap = document.getElementById("adminComplaintTableWrap");
+const adminComplaintList = document.getElementById("adminComplaintList");
+const adminSearch = document.getElementById("adminSearch");
+const adminCategory = document.getElementById("adminCategory");
+
+// Resolution Modal
+const resolutionModal = document.getElementById("resolutionModal");
+const closeResolutionModal = document.getElementById("closeResolutionModal");
+const cancelResolutionBtn = document.getElementById("cancelResolutionBtn");
+const resolutionForm = document.getElementById("resolutionForm");
+const modalComplaintId = document.getElementById("modalComplaintId");
+const modalComplaintTitle = document.getElementById("modalComplaintTitle");
+const modalReporter = document.getElementById("modalReporter");
+const modalCategory = document.getElementById("modalCategory");
+const modalLocation = document.getElementById("modalLocation");
+const modalDate = document.getElementById("modalDate");
+const modalDescription = document.getElementById("modalDescription");
+const modalImageWrap = document.getElementById("modalImageWrap");
+const modalImagePreview = document.getElementById("modalImagePreview");
+const modalImageLink = document.getElementById("modalImageLink");
+const modalStatusSelect = document.getElementById("modalStatusSelect");
+const modalResolutionNotes = document.getElementById("modalResolutionNotes");
+
+// Helper: Auth Headers
 function getAuthHeaders() {
     return {
         "Authorization": `Bearer ${adminToken}`,
@@ -26,245 +68,7 @@ function getAuthHeaders() {
     };
 }
 
-// ================================
-// LOGIN
-// ================================
-
-adminLoginForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const email = adminEmail.value.trim();
-    const password = adminPassword.value.trim();
-
-    try {
-        const response = await fetch(`${API_URL}/users/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.message || "Invalid admin email or password!");
-            return;
-        }
-
-        if (data.user.role !== "admin" && data.user.role !== "super_admin") {
-            alert("Access Denied: You are not an admin.");
-            return;
-        }
-
-        adminToken = data.token;
-        sessionStorage.setItem("adminToken", data.token);
-        sessionStorage.setItem("adminRole", data.user.role);
-        sessionStorage.setItem("adminName", data.user.name);
-        sessionStorage.setItem("adminEmail", data.user.email);
-        
-        showAdminDashboard();
-    } catch (error) {
-        console.error("Admin Login Error:", error);
-        alert("Server connection failed.");
-    }
-});
-
-// ================================
-// SHOW DASHBOARD
-// ================================
-
-function showAdminDashboard() {
-    adminLogin.style.display = "none";
-    adminDashboard.style.display = "flex";
-    
-    const role = sessionStorage.getItem("adminRole");
-    const name = sessionStorage.getItem("adminName");
-    const email = sessionStorage.getItem("adminEmail");
-    
-    // Update profile UI
-    if (name) {
-        const nameEl = document.getElementById("adminProfileName");
-        const avatarEl = document.getElementById("adminAvatarText");
-        const roleEl = document.getElementById("adminProfileRole");
-        if (nameEl) nameEl.textContent = name;
-        if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
-        if (roleEl) {
-            roleEl.textContent = role === "super_admin" ? "Super Admin" : "Campus Admin";
-        }
-    }
-
-    const nav = document.getElementById("manageAdminsNav");
-    const section = document.getElementById("manageAdmins");
-
-    if (role === "super_admin") {
-        if (nav) nav.style.display = "block";
-    } else {
-        if (nav) nav.style.display = "none";
-        if (section) section.style.display = "none";
-    }
-    
-    // Trigger router
-    if (!window.location.hash || window.location.hash === "#") {
-        window.location.hash = "adminOverview";
-    } else {
-        handleRoute();
-    }
-}
-
-// ================================
-// LOGOUT
-// ================================
-
-adminLogout.addEventListener("click", function () {
-    sessionStorage.removeItem("adminToken");
-    sessionStorage.removeItem("adminRole");
-    sessionStorage.removeItem("adminName");
-    sessionStorage.removeItem("adminEmail");
-    adminToken = null;
-    
-    adminDashboard.style.display = "none";
-    adminLogin.style.display = "flex";
-
-    adminLoginForm.reset();
-});
-
-// ================================
-// GET COMPLAINTS
-// ================================
-
-async function getComplaints() {
-    try {
-        const response = await fetch(`${API_URL}/complaints`, {
-            headers: getAuthHeaders()
-        });
-        
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error(data.message || "Failed to load complaints");
-            return [];
-        }
-
-        return data.complaints || [];
-
-    } catch (error) {
-        console.error("Admin complaints fetch error:", error);
-        return [];
-    }
-}
-
-// ================================
-// LOAD ADMIN DATA
-// ================================
-
-function getSkeletonCard() {
-    return `
-        <div class="admin-complaint-card" style="background: #f1f5f9; height: 100px; border-radius: 8px; margin-bottom: 15px;"></div>
-    `;
-}
-
-async function loadAdminData() {
-    // Skeletons
-    const list = document.getElementById("adminComplaintList");
-    const recent = document.getElementById("adminRecentComplaints");
-    if(list) list.innerHTML = getSkeletonCard() + getSkeletonCard();
-    if(recent) recent.innerHTML = getSkeletonCard() + getSkeletonCard();
-
-    const complaints = await getComplaints();
-
-    updateStats(complaints);
-    showRecentComplaints(complaints);
-    showAllComplaints(complaints);
-}
-
-// ================================
-// UPDATE STATS
-// ================================
-
-function updateStats(complaints) {
-    const total = complaints.length;
-    const pending = complaints.filter(complaint => complaint.status === "Pending").length;
-    const progress = complaints.filter(complaint => complaint.status === "In Progress").length;
-    const resolved = complaints.filter(complaint => complaint.status === "Resolved").length;
-
-    if(document.getElementById("adminTotal")) document.getElementById("adminTotal").textContent = total;
-    if(document.getElementById("adminPending")) document.getElementById("adminPending").textContent = pending;
-    if(document.getElementById("adminProgress")) document.getElementById("adminProgress").textContent = progress;
-    if(document.getElementById("adminResolved")) document.getElementById("adminResolved").textContent = resolved;
-}
-
-// ================================
-// RECENT COMPLAINTS
-// ================================
-
-function showRecentComplaints(complaints) {
-    const container = document.getElementById("adminRecentComplaints");
-    if(!container) return;
-
-    container.innerHTML = "";
-
-    if (complaints.length === 0) {
-        container.innerHTML = `
-            <div class="admin-complaint-card">
-                <h3>No Complaints Yet</h3>
-                <p>Students have not submitted any complaints.</p>
-            </div>
-        `;
-        return;
-    }
-
-    const recent = [...complaints].reverse().slice(0, 5);
-
-    recent.forEach(complaint => {
-        container.innerHTML += createComplaintCard(complaint, false);
-    });
-}
-
-// ================================
-// ALL COMPLAINTS
-// ================================
-
-function showAllComplaints(complaints = []) {
-    const container = document.getElementById("adminComplaintList");
-    if(!container) return;
-    
-    container.innerHTML = "";
-
-    if (complaints.length === 0) {
-        container.innerHTML = `
-            <div class="admin-complaint-card empty-state" style="text-align:center;">
-                <i data-lucide="inbox" style="width:48px;height:48px;color:#cbd5e1;margin-bottom:10px;"></i>
-                <h3>No Complaints Found</h3>
-                <p>There are no complaints to display.</p>
-            </div>
-        `;
-        initIcons();
-        return;
-    }
-
-    [...complaints].reverse().forEach(complaint => {
-        container.innerHTML += createComplaintCard(complaint, true);
-    });
-    
-    initIcons();
-}
-
-// ================================
-// COMPLAINT CARD
-// ================================
-
-function getComplaintId(complaint) {
-    return complaint._id || complaint.id || "";
-}
-
-function getComplaintReporterName(complaint) {
-    const reportedBy = complaint.reportedBy;
-    if (!reportedBy) return "Unknown";
-    if (typeof reportedBy === "object") return reportedBy.name || reportedBy.email || "Unknown";
-    return reportedBy;
-}
-
+// Helper: Escape HTML
 function escapeHTML(value) {
     if (!value) return "";
     return String(value)
@@ -275,67 +79,610 @@ function escapeHTML(value) {
         .replace(/'/g, "&#039;");
 }
 
-function createComplaintCard(complaint, showUpdate) {
-    let statusClass = "pending";
-    if (complaint.status === "In Progress") statusClass = "progress";
-    if (complaint.status === "Resolved") statusClass = "resolved";
+function getComplaintId(complaint) {
+    return complaint._id || complaint.id || "";
+}
 
-    const complaintId = getComplaintId(complaint);
-    
-    let imageHtml = "";
-    if (complaint.image) {
-        imageHtml = `
-            <div style="margin-top: 10px;">
-                <a href="${complaint.image}" target="_blank">
-                    <img src="${complaint.image}" alt="Complaint Image" style="max-width: 100px; border-radius: 4px; cursor: pointer;">
-                </a>
-            </div>
-        `;
+function getComplaintReporterName(complaint) {
+    const reportedBy = complaint.reportedBy;
+    if (!reportedBy) return "Student";
+    if (typeof reportedBy === "object") return reportedBy.name || reportedBy.email || "Student";
+    return String(reportedBy);
+}
+
+function getComplaintReporterEmail(complaint) {
+    const reportedBy = complaint.reportedBy;
+    if (!reportedBy) return "";
+    if (typeof reportedBy === "object") return reportedBy.email || "";
+    return "";
+}
+
+// =========================================================
+// SIDEBAR COLLAPSE & MOBILE DRAWER HANDLER
+// =========================================================
+
+function initSidebarState() {
+    const isCollapsed = localStorage.getItem("adminSidebarCollapsed") === "true";
+    if (isCollapsed && window.innerWidth > 768) {
+        adminSidebar?.classList.add("collapsed");
+    }
+}
+
+sidebarCollapseBtn?.addEventListener("click", () => {
+    adminSidebar?.classList.toggle("collapsed");
+    const collapsed = adminSidebar?.classList.contains("collapsed");
+    localStorage.setItem("adminSidebarCollapsed", collapsed ? "true" : "false");
+});
+
+mobileSidebarToggle?.addEventListener("click", () => {
+    adminSidebar?.classList.add("mobile-open");
+    sidebarOverlay?.classList.add("active");
+});
+
+sidebarOverlay?.addEventListener("click", () => {
+    adminSidebar?.classList.remove("mobile-open");
+    sidebarOverlay?.classList.remove("active");
+});
+
+// Close mobile drawer on navigation click
+document.querySelectorAll(".admin-nav a").forEach(link => {
+    link.addEventListener("click", () => {
+        if (window.innerWidth <= 768) {
+            adminSidebar?.classList.remove("mobile-open");
+            sidebarOverlay?.classList.remove("active");
+        }
+    });
+});
+
+// =========================================================
+// AUTHENTICATION (LOGIN & LOGOUT)
+// =========================================================
+
+adminLoginForm?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = adminEmail.value.trim();
+    const password = adminPassword.value.trim();
+
+    try {
+        const response = await fetch(`${API_URL}/users/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message || "Invalid administrative credentials.");
+            return;
+        }
+
+        if (data.user.role !== "admin" && data.user.role !== "super_admin") {
+            alert("Access Denied: Only campus administrators can log into this console.");
+            return;
+        }
+
+        adminToken = data.token;
+        sessionStorage.setItem("adminToken", data.token);
+        sessionStorage.setItem("adminRole", data.user.role);
+        sessionStorage.setItem("adminName", data.user.name);
+        sessionStorage.setItem("adminEmail", data.user.email);
+
+        showAdminDashboard();
+        showToast(`Welcome back, ${data.user.name}!`, "success");
+
+    } catch (error) {
+        console.error("Admin Login Error:", error);
+        alert("Server connection failed. Ensure the backend server is running.");
+    }
+});
+
+adminLogout?.addEventListener("click", function () {
+    sessionStorage.removeItem("adminToken");
+    sessionStorage.removeItem("adminRole");
+    sessionStorage.removeItem("adminName");
+    sessionStorage.removeItem("adminEmail");
+    adminToken = null;
+
+    adminDashboard.style.display = "none";
+    adminLogin.style.display = "flex";
+    adminLoginForm?.reset();
+    showToast("Signed out successfully", "info");
+});
+
+// =========================================================
+// DASHBOARD INITIALIZATION
+// =========================================================
+
+function showAdminDashboard() {
+    if (adminLogin) adminLogin.style.display = "none";
+    if (adminDashboard) adminDashboard.style.display = "flex";
+
+    const role = sessionStorage.getItem("adminRole");
+    const name = sessionStorage.getItem("adminName");
+
+    // Profile UI
+    const nameEl = document.getElementById("adminProfileName");
+    const avatarEl = document.getElementById("adminAvatarText");
+    const roleEl = document.getElementById("adminProfileRole");
+
+    if (nameEl && name) nameEl.textContent = name;
+    if (avatarEl && name) avatarEl.textContent = name.charAt(0).toUpperCase();
+    if (roleEl) {
+        roleEl.textContent = role === "super_admin" ? "Super Admin" : "Campus Admin";
     }
 
+    // Role-Aware Navigation
+    if (role === "super_admin") {
+        if (manageAdminsNavGroup) manageAdminsNavGroup.style.display = "flex";
+    } else {
+        if (manageAdminsNavGroup) manageAdminsNavGroup.style.display = "none";
+    }
+
+    initSidebarState();
+    setViewMode(currentViewMode);
+
+    // Initial Hash Route
+    if (!window.location.hash || window.location.hash === "#") {
+        window.location.hash = "adminOverview";
+    } else {
+        handleRoute();
+    }
+}
+
+// =========================================================
+// DATA FETCHING & SYNCHRONIZATION
+// =========================================================
+
+async function getComplaints() {
+    try {
+        const response = await fetch(`${API_URL}/complaints`, {
+            headers: getAuthHeaders()
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            console.error(data.message || "Failed to load complaints");
+            return [];
+        }
+
+        allComplaintsCache = data.complaints || [];
+        return allComplaintsCache;
+
+    } catch (error) {
+        console.error("Admin complaints fetch error:", error);
+        return [];
+    }
+}
+
+async function loadAdminData() {
+    if (refreshIcon) refreshIcon.style.animation = "spin 0.6s linear infinite";
+
+    const complaints = await getComplaints();
+
+    updateStatsAndBadges(complaints);
+    showRecentComplaints(complaints);
+    applyFiltersAndRender(complaints);
+
+    if (refreshIcon) {
+        setTimeout(() => {
+            refreshIcon.style.animation = "";
+        }, 500);
+    }
+}
+
+refreshDataBtn?.addEventListener("click", () => {
+    loadAdminData();
+    showToast("Live data synced", "info");
+});
+
+// =========================================================
+// STATS & BADGE COUNTERS
+// =========================================================
+
+function updateStatsAndBadges(complaints) {
+    const total = complaints.length;
+    const pending = complaints.filter(c => c.status === "Pending").length;
+    const progress = complaints.filter(c => c.status === "In Progress").length;
+    const resolved = complaints.filter(c => c.status === "Resolved").length;
+
+    // Stat Cards
+    const totalEl = document.getElementById("adminTotal");
+    const pendingEl = document.getElementById("adminPending");
+    const progressEl = document.getElementById("adminProgress");
+    const resolvedEl = document.getElementById("adminResolved");
+
+    if (totalEl) totalEl.textContent = total;
+    if (pendingEl) pendingEl.textContent = pending;
+    if (progressEl) progressEl.textContent = progress;
+    if (resolvedEl) resolvedEl.textContent = resolved;
+
+    // Sidebar Badge
+    if (sidebarPendingBadge) {
+        if (pending > 0) {
+            sidebarPendingBadge.textContent = pending;
+            sidebarPendingBadge.style.display = "inline-block";
+        } else {
+            sidebarPendingBadge.style.display = "none";
+        }
+    }
+
+    // Status Tab Badges
+    const countAll = document.getElementById("tabCountAll");
+    const countPending = document.getElementById("tabCountPending");
+    const countProgress = document.getElementById("tabCountProgress");
+    const countResolved = document.getElementById("tabCountResolved");
+
+    if (countAll) countAll.textContent = total;
+    if (countPending) countPending.textContent = pending;
+    if (countProgress) countProgress.textContent = progress;
+    if (countResolved) countResolved.textContent = resolved;
+}
+
+// Clickable KPI Cards: Click to Filter Queue
+document.querySelectorAll(".kpi-card").forEach(card => {
+    card.addEventListener("click", () => {
+        const filterStatus = card.getAttribute("data-filter");
+        window.location.hash = "allComplaints";
+        setTimeout(() => {
+            setActiveStatusTab(filterStatus);
+        }, 50);
+    });
+});
+
+// =========================================================
+// RECENT INFLOW COMPLAINTS (DASHBOARD WIDGET)
+// =========================================================
+
+function showRecentComplaints(complaints) {
+    const container = document.getElementById("adminRecentComplaints");
+    if (!container) return;
+
+    if (complaints.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state-wrap">
+                <i data-lucide="inbox" class="empty-state-icon"></i>
+                <h3>No Submissions Found</h3>
+                <p>Campus facilities are operating smoothly with no recent reports.</p>
+            </div>
+        `;
+        initIcons();
+        return;
+    }
+
+    const recent = [...complaints].reverse().slice(0, 4);
+    container.innerHTML = recent.map(complaint => createComplaintCardHtml(complaint)).join("");
+    initIcons();
+}
+
+// =========================================================
+// QUEUE RENDERING (TABLE & CARD GRID VIEWS)
+// =========================================================
+
+function setViewMode(mode) {
+    currentViewMode = mode;
+    localStorage.setItem("adminViewMode", mode);
+
+    if (mode === "table") {
+        viewTableBtn?.classList.add("active");
+        viewCardsBtn?.classList.remove("active");
+        if (adminComplaintTableWrap) adminComplaintTableWrap.style.display = "block";
+        if (adminComplaintList) adminComplaintList.style.display = "none";
+    } else {
+        viewCardsBtn?.classList.add("active");
+        viewTableBtn?.classList.remove("active");
+        if (adminComplaintTableWrap) adminComplaintTableWrap.style.display = "none";
+        if (adminComplaintList) adminComplaintList.style.display = "grid";
+    }
+}
+
+viewTableBtn?.addEventListener("click", () => setViewMode("table"));
+viewCardsBtn?.addEventListener("click", () => setViewMode("grid"));
+
+function renderComplaintsQueue(complaints) {
+    const tbody = document.getElementById("adminComplaintTableBody");
+    const cardsGrid = document.getElementById("adminComplaintList");
+
+    if (!tbody || !cardsGrid) return;
+
+    if (complaints.length === 0) {
+        const emptyHtml = `
+            <div class="empty-state-wrap">
+                <i data-lucide="filter-x" class="empty-state-icon"></i>
+                <h3>No Matching Complaints</h3>
+                <p>Try clearing your search query or changing the status filter.</p>
+            </div>
+        `;
+        tbody.innerHTML = `<tr><td colspan="7">${emptyHtml}</td></tr>`;
+        cardsGrid.innerHTML = emptyHtml;
+        initIcons();
+        return;
+    }
+
+    // Sort newest first
+    const sorted = [...complaints].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+    // Render Table Rows
+    tbody.innerHTML = sorted.map(complaint => createTableRowHtml(complaint)).join("");
+
+    // Render Grid Cards
+    cardsGrid.innerHTML = sorted.map(complaint => createComplaintCardHtml(complaint)).join("");
+
+    initIcons();
+}
+
+// Table Row HTML Generator
+function createTableRowHtml(complaint) {
+    const id = getComplaintId(complaint);
+    const reporterName = getComplaintReporterName(complaint);
+    const reporterEmail = getComplaintReporterEmail(complaint);
+    const avatar = reporterName.charAt(0).toUpperCase();
+    const dateFormatted = complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : "-";
+
+    let statusBadgeClass = "status-pending";
+    if (complaint.status === "In Progress") statusBadgeClass = "status-progress";
+    if (complaint.status === "Resolved") statusBadgeClass = "status-resolved";
+
+    const hasImage = Boolean(complaint.image);
+
     return `
-        <div class="admin-complaint-card">
-            <div class="admin-complaint-top">
-                <div>
-                    <h3>${escapeHTML(complaint.title)}</h3>
-                    <p>${escapeHTML(complaint.description)}</p>
+        <tr data-id="${id}">
+            <td>
+                <div class="table-complaint-cell">
+                    <span class="table-complaint-title">
+                        ${escapeHTML(complaint.title)}
+                        ${hasImage ? `<i data-lucide="image" class="table-has-image" title="Has photo attachment"></i>` : ""}
+                    </span>
+                    <span class="table-complaint-desc">${escapeHTML(complaint.description)}</span>
                 </div>
-                <span class="status ${statusClass}">${complaint.status}</span>
+            </td>
+            <td>
+                <div class="table-reporter-cell">
+                    <div class="table-avatar-pill">${avatar}</div>
+                    <div class="table-reporter-meta">
+                        <span class="table-reporter-name">${escapeHTML(reporterName)}</span>
+                        ${reporterEmail ? `<span class="table-reporter-email">${escapeHTML(reporterEmail)}</span>` : ""}
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span class="category-tag">
+                    <i data-lucide="tag" style="width:12px;height:12px;"></i>
+                    ${escapeHTML(complaint.category || "General")}
+                </span>
+            </td>
+            <td>
+                <span class="location-tag">
+                    <i data-lucide="map-pin"></i>
+                    ${escapeHTML(complaint.location || "Campus")}
+                </span>
+            </td>
+            <td style="color:#64748b; font-size:0.8125rem;">
+                ${dateFormatted}
+            </td>
+            <td>
+                <span class="badge-status ${statusBadgeClass}">
+                    <span class="badge-dot"></span>
+                    <span>${escapeHTML(complaint.status || "Pending")}</span>
+                </span>
+            </td>
+            <td style="text-align: right;">
+                <button class="action-triage-btn" onclick="openResolutionModal('${id}')">
+                    <i data-lucide="sliders-horizontal"></i>
+                    <span>Triage</span>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+// Card HTML Generator
+function createComplaintCardHtml(complaint) {
+    const id = getComplaintId(complaint);
+    const reporterName = getComplaintReporterName(complaint);
+    const dateFormatted = complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString() : "";
+
+    let statusBadgeClass = "status-pending";
+    if (complaint.status === "In Progress") statusBadgeClass = "status-progress";
+    if (complaint.status === "Resolved") statusBadgeClass = "status-resolved";
+
+    return `
+        <div class="admin-complaint-card" data-id="${id}">
+            <div class="card-top-row">
+                <h3 class="card-title">${escapeHTML(complaint.title)}</h3>
+                <span class="badge-status ${statusBadgeClass}">
+                    <span class="badge-dot"></span>
+                    <span>${escapeHTML(complaint.status)}</span>
+                </span>
             </div>
 
-            <div class="complaint-info" style="display:flex; gap:15px; align-items:center; flex-wrap:wrap; margin-top:10px; color:#64748b;">
-                <span style="display:flex;align-items:center;gap:4px;"><i data-lucide="user" style="width:14px;height:14px;"></i> ${escapeHTML(getComplaintReporterName(complaint))}</span>
-                <span style="display:flex;align-items:center;gap:4px;"><i data-lucide="folder" style="width:14px;height:14px;"></i> ${escapeHTML(complaint.category)}</span>
-                <span style="display:flex;align-items:center;gap:4px;"><i data-lucide="map-pin" style="width:14px;height:14px;"></i> ${escapeHTML(complaint.location)}</span>
-                <span style="display:flex;align-items:center;gap:4px;"><i data-lucide="calendar" style="width:14px;height:14px;"></i> ${escapeHTML(complaint.createdAt ? new Date(complaint.createdAt).toLocaleDateString() : "")}</span>
-                ${complaint.resolvedBy ? `<span style="display:flex;align-items:center;gap:4px;color:#10b981;"><i data-lucide="check-circle" style="width:14px;height:14px;"></i> Resolved By: ${escapeHTML(complaint.resolvedBy)}</span>` : ""}
-            </div>
-            
-            ${imageHtml}
+            <p class="card-desc">${escapeHTML(complaint.description)}</p>
 
-            ${showUpdate ? `
-                <div class="admin-update">
-                    <select class="status-select" data-id="${complaintId}">
-                        <option value="Pending" ${complaint.status === "Pending" ? "selected" : ""}>Pending</option>
-                        <option value="In Progress" ${complaint.status === "In Progress" ? "selected" : ""}>In Progress</option>
-                        <option value="Resolved" ${complaint.status === "Resolved" ? "selected" : ""}>Resolved</option>
-                    </select>
-                    <button onclick="updateComplaint('${complaintId}')">Update Status</button>
-                </div>
+            ${complaint.image ? `
+                <a href="${complaint.image}" target="_blank" title="Click to view full image">
+                    <img src="${complaint.image}" alt="Evidence" class="card-image-thumb">
+                </a>
             ` : ""}
+
+            <div class="card-tags">
+                <span class="category-tag"><i data-lucide="tag" style="width:12px;height:12px;"></i> ${escapeHTML(complaint.category)}</span>
+                <span class="location-tag"><i data-lucide="map-pin"></i> ${escapeHTML(complaint.location)}</span>
+            </div>
+
+            <div class="card-meta-list">
+                <div class="card-meta-item">
+                    <i data-lucide="user"></i>
+                    <span>${escapeHTML(reporterName)}</span>
+                </div>
+                <div class="card-meta-item">
+                    <i data-lucide="calendar"></i>
+                    <span>${dateFormatted}</span>
+                </div>
+                ${complaint.resolvedBy ? `
+                    <div class="card-meta-item text-success">
+                        <i data-lucide="check-circle"></i>
+                        <span>Resolved by: ${escapeHTML(complaint.resolvedBy)}</span>
+                    </div>
+                ` : ""}
+            </div>
+
+            <div class="card-footer-actions">
+                <span style="font-size:0.75rem; color:#94a3b8;">ID: #${id.slice(-6)}</span>
+                <button class="action-triage-btn" onclick="openResolutionModal('${id}')">
+                    <i data-lucide="sliders-horizontal"></i>
+                    <span>Triage &amp; Resolve</span>
+                </button>
+            </div>
         </div>
     `;
 }
 
-// ================================
-// UPDATE STATUS
-// ================================
+// =========================================================
+// ADVANCED FILTERING (STATUS TABS, SEARCH & CATEGORY)
+// =========================================================
 
-async function updateComplaint(id) {
-    const select = document.querySelector(`.status-select[data-id="${id}"]`);
-    if (!select) return;
+function applyFiltersAndRender(complaints = allComplaintsCache) {
+    const search = (adminSearch?.value || topbarSearchInput?.value || "").toLowerCase().trim();
+    const category = adminCategory?.value || "all";
 
-    const newStatus = select.value;
+    const filtered = complaints.filter(complaint => {
+        const reporterName = getComplaintReporterName(complaint).toLowerCase();
+        const reporterEmail = getComplaintReporterEmail(complaint).toLowerCase();
+        const title = (complaint.title || "").toLowerCase();
+        const description = (complaint.description || "").toLowerCase();
+        const location = (complaint.location || "").toLowerCase();
+
+        const matchesSearch =
+            !search ||
+            title.includes(search) ||
+            description.includes(search) ||
+            reporterName.includes(search) ||
+            reporterEmail.includes(search) ||
+            location.includes(search);
+
+        const matchesStatus = currentFilterStatus === "all" || complaint.status === currentFilterStatus;
+        const matchesCategory = category === "all" || complaint.category === category;
+
+        return matchesSearch && matchesStatus && matchesCategory;
+    });
+
+    renderComplaintsQueue(filtered);
+}
+
+// Status Tabs Click Handlers
+document.querySelectorAll(".status-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        const status = tab.getAttribute("data-status");
+        setActiveStatusTab(status);
+    });
+});
+
+function setActiveStatusTab(status) {
+    currentFilterStatus = status;
+    document.querySelectorAll(".status-tab").forEach(t => {
+        if (t.getAttribute("data-status") === status) {
+            t.classList.add("active");
+        } else {
+            t.classList.remove("active");
+        }
+    });
+    applyFiltersAndRender();
+}
+
+// Search & Select Listeners
+adminSearch?.addEventListener("input", () => {
+    if (topbarSearchInput && topbarSearchInput.value !== adminSearch.value) {
+        topbarSearchInput.value = adminSearch.value;
+    }
+    applyFiltersAndRender();
+});
+
+topbarSearchInput?.addEventListener("input", () => {
+    if (adminSearch && adminSearch.value !== topbarSearchInput.value) {
+        adminSearch.value = topbarSearchInput.value;
+    }
+    if (window.location.hash !== "#allComplaints") {
+        window.location.hash = "allComplaints";
+    }
+    applyFiltersAndRender();
+});
+
+adminCategory?.addEventListener("change", () => applyFiltersAndRender());
+
+// Global Keyboard Shortcuts (Ctrl+K for Search, Ctrl+B for Sidebar Toggle)
+window.addEventListener("keydown", (e) => {
+    // Ctrl+K / Cmd+K: Search shortcut
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (topbarSearchInput) {
+            topbarSearchInput.focus();
+            topbarSearchInput.select();
+        }
+    }
+    // Ctrl+B / Cmd+B: Sidebar toggle shortcut
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.click();
+        }
+    }
+});
+
+// =========================================================
+// RESOLUTION & TRIAGE MODAL
+// =========================================================
+
+window.openResolutionModal = function (complaintId) {
+    const complaint = allComplaintsCache.find(c => getComplaintId(c) === complaintId);
+    if (!complaint) return;
+
+    modalComplaintId.value = complaintId;
+    modalComplaintTitle.textContent = complaint.title || "Complaint";
+    modalReporter.textContent = getComplaintReporterName(complaint);
+    modalCategory.textContent = complaint.category || "General";
+    modalLocation.textContent = complaint.location || "Campus";
+    modalDate.textContent = complaint.createdAt ? new Date(complaint.createdAt).toLocaleString() : "-";
+    modalDescription.textContent = complaint.description || "No description provided.";
+
+    // Evidence Photo
+    if (complaint.image) {
+        modalImageWrap.style.display = "block";
+        modalImagePreview.src = complaint.image;
+        modalImageLink.href = complaint.image;
+    } else {
+        modalImageWrap.style.display = "none";
+    }
+
+    // Status & Remarks
+    modalStatusSelect.value = complaint.status || "Pending";
+    modalResolutionNotes.value = complaint.resolutionMessage || "";
+
+    resolutionModal.classList.remove("hidden");
+    initIcons();
+};
+
+function hideResolutionModal() {
+    resolutionModal.classList.add("hidden");
+}
+
+closeResolutionModal?.addEventListener("click", hideResolutionModal);
+cancelResolutionBtn?.addEventListener("click", hideResolutionModal);
+
+resolutionModal?.addEventListener("click", (e) => {
+    if (e.target === resolutionModal) hideResolutionModal();
+});
+
+resolutionForm?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const id = modalComplaintId.value;
+    const newStatus = modalStatusSelect.value;
+    const notes = modalResolutionNotes.value.trim() || `Status updated to ${newStatus} by admin`;
+
+    const saveBtn = document.getElementById("saveResolutionBtn");
+    if (saveBtn) saveBtn.disabled = true;
 
     try {
         const response = await fetch(`${API_URL}/complaints/${id}`, {
@@ -343,203 +690,212 @@ async function updateComplaint(id) {
             headers: getAuthHeaders(),
             body: JSON.stringify({
                 status: newStatus,
-                resolutionMessage: "Updated by admin"
+                resolutionMessage: notes
             })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            alert(data.message || "Complaint update failed");
+            alert(data.message || "Failed to update complaint status");
             return;
         }
 
-        alert("Complaint status updated!");
+        showToast("Complaint lifecycle updated successfully!", "success");
+        hideResolutionModal();
         await loadAdminData();
 
     } catch (error) {
-        console.error("Admin update complaint error:", error);
-        alert("Server connection failed. Make sure backend is running.");
+        console.error("Resolution update error:", error);
+        alert("Server error occurred while saving complaint update.");
+    } finally {
+        if (saveBtn) saveBtn.disabled = false;
     }
-}
+});
 
-// ================================
-// NAVIGATION (HASH ROUTER)
-// ================================
+// =========================================================
+// ROUTER (HASH-BASED NAVIGATION)
+// =========================================================
 
 function handleRoute() {
     if (!adminToken) return;
-    
+
     let hash = window.location.hash.substring(1);
     if (!hash) {
         hash = "adminOverview";
         window.location.hash = hash;
-        return; // handleRoute will run again
+        return;
     }
 
-    const navLinks = document.querySelectorAll(".admin-nav a");
-    navLinks.forEach(item => item.classList.remove("active"));
-    
-    const activeLink = document.querySelector(`.admin-nav a[data-section="${hash}"]`);
-    if (activeLink) activeLink.classList.add("active");
-
-    document.querySelectorAll(".admin-main section").forEach(section => {
-        section.style.display = "none";
+    // Active Sidebar Nav
+    document.querySelectorAll(".admin-nav .nav-item").forEach(item => {
+        if (item.getAttribute("data-section") === hash) {
+            item.classList.add("active");
+        } else {
+            item.classList.remove("active");
+        }
     });
 
-    const section = document.getElementById(hash);
-    if (section) section.style.display = "block";
+    // Toggle Page Sections
+    document.querySelectorAll(".admin-page-section").forEach(sec => {
+        sec.style.display = "none";
+    });
 
-    // Dynamic data flow on route change
-    if (hash === "allComplaints") {
-        getComplaints().then(complaints => showAllComplaints(complaints));
+    const activeSection = document.getElementById(hash);
+    if (activeSection) activeSection.style.display = "flex";
+
+    // Update Topbar Breadcrumb
+    const breadcrumbTitles = {
+        adminOverview: "Dashboard Overview",
+        allComplaints: "Complaint Management Queue",
+        manageAdmins: "Staff Access Control"
+    };
+
+    if (topbarCurrentView) {
+        topbarCurrentView.textContent = breadcrumbTitles[hash] || "Dashboard";
+    }
+
+    // Dynamic data flow per view
+    if (hash === "adminOverview") {
+        loadAdminData();
+    } else if (hash === "allComplaints") {
+        loadAdminData();
     } else if (hash === "manageAdmins") {
         loadAdminsList();
-    } else if (hash === "adminOverview") {
-        loadAdminData();
     }
+
+    initIcons();
 }
 
 window.addEventListener("hashchange", handleRoute);
 
-// ================================
-// SEARCH
-// ================================
-
-const adminSearch = document.getElementById("adminSearch");
-const adminStatus = document.getElementById("adminStatus");
-const adminCategory = document.getElementById("adminCategory");
-
-async function filterComplaints() {
-    const complaints = await getComplaints();
-
-    const search = adminSearch?.value.toLowerCase().trim() || "";
-    const status = adminStatus?.value || "all";
-    const category = adminCategory?.value || "all";
-
-    const filtered = complaints.filter(complaint => {
-        const reporterName = getComplaintReporterName(complaint).toLowerCase();
-
-        const matchesSearch = 
-            complaint.title.toLowerCase().includes(search) ||
-            complaint.description.toLowerCase().includes(search) ||
-            reporterName.includes(search);
-
-        const matchesStatus = status === "all" || complaint.status === status;
-        const matchesCategory = category === "all" || complaint.category === category;
-
-        return matchesSearch && matchesStatus && matchesCategory;
-    });
-
-    showAllComplaints(filtered);
-}
-
-if(adminSearch) adminSearch.addEventListener("input", filterComplaints);
-if(adminStatus) adminStatus.addEventListener("change", filterComplaints);
-if(adminCategory) adminCategory.addEventListener("change", filterComplaints);
-
-// ================================
-// ADMIN LOGIN CHECK
-// ================================
-
-if (adminToken) {
-    showAdminDashboard();
-} else {
-    if(adminDashboard) adminDashboard.style.display = "none";
-    if(adminLogin) adminLogin.style.display = "flex";
-}
-
-// ================================
-// SUPER ADMIN MANAGEMENT
-// ================================
+// =========================================================
+// SUPER ADMIN MANAGEMENT (SUB-ADMINS DIRECTORY)
+// =========================================================
 
 async function loadAdminsList() {
+    const listContainer = document.getElementById("adminsList");
+    if (!listContainer) return;
+
+    listContainer.innerHTML = `<div style="padding: 20px; text-align: center; color: #94a3b8;">Loading administrator directory...</div>`;
+
     try {
         const response = await fetch(`${API_URL}/users/admin`, {
             headers: getAuthHeaders()
         });
+
         const admins = await response.json();
-        
-        const list = document.getElementById("adminsList");
-        if (!list) return;
 
         if (!response.ok) {
-            list.innerHTML = `<p style="color:red">Failed to load admins</p>`;
+            listContainer.innerHTML = `<div style="color: #ef4444; padding: 10px;">Failed to load admins list.</div>`;
             return;
         }
 
-        if (admins.length === 0) {
-            list.innerHTML = `<p>No sub-admins found.</p>`;
-            return;
-        }
-
-        list.innerHTML = admins.map(admin => `
-            <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 15px; border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.boxShadow='none'; this.style.borderColor='#e2e8f0';">
-                <div>
-                    <strong>${escapeHTML(admin.name)}</strong><br>
-                    <small style="color:#64748b">${escapeHTML(admin.email)}</small>
+        if (!Array.isArray(admins) || admins.length === 0) {
+            listContainer.innerHTML = `
+                <div class="empty-state-wrap" style="padding: 30px 10px;">
+                    <i data-lucide="shield-alert" class="empty-state-icon"></i>
+                    <h3>No Sub-Admins Provisioned</h3>
+                    <p>Only the primary Super Admin is currently active.</p>
                 </div>
-                <button onclick="revokeAdminAccess('${admin._id || admin.id}')" style="background:#ef4444; color:white; border:none; padding: 8px 14px; border-radius: 6px; cursor:pointer; font-weight:500; font-size:13px; transition: all 0.2s;" onmouseover="this.style.background='#dc2626'; this.style.transform='scale(0.98)';" onmouseout="this.style.background='#ef4444'; this.style.transform='scale(1)';">
-                    Revoke Access
-                </button>
-            </div>
-        `).join("");
+            `;
+            initIcons();
+            return;
+        }
 
-    } catch (err) {
-        console.error(err);
+        listContainer.innerHTML = admins.map(user => {
+            const userId = user._id || user.id;
+            const userInitial = (user.name || "A").charAt(0).toUpperCase();
+            const dateCreated = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "Active";
+
+            return `
+                <div class="admin-user-row">
+                    <div class="admin-user-meta">
+                        <div class="user-avatar-badge">${userInitial}</div>
+                        <div>
+                            <strong style="display:block; font-size: 0.875rem; color:#0f172a;">${escapeHTML(user.name)}</strong>
+                            <span style="font-size: 0.75rem; color: #64748b;">${escapeHTML(user.email)}</span>
+                            <span style="display:inline-block; font-size: 0.6875rem; background: #e2e8f0; padding: 1px 6px; border-radius: 4px; margin-left: 6px;">Joined: ${dateCreated}</span>
+                        </div>
+                    </div>
+                    <button class="revoke-btn" onclick="revokeAdminAccess('${userId}')">
+                        <i data-lucide="trash-2"></i>
+                        <span>Revoke</span>
+                    </button>
+                </div>
+            `;
+        }).join("");
+
+        initIcons();
+
+    } catch (error) {
+        console.error("Admins list fetch error:", error);
+        listContainer.innerHTML = `<div style="color: #ef4444; padding: 10px;">Connection error loading directory.</div>`;
     }
 }
 
 const createAdminForm = document.getElementById("createAdminForm");
 if (createAdminForm) {
-    createAdminForm.addEventListener("submit", async (e) => {
+    createAdminForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        
-        const name = document.getElementById("newAdminName").value;
-        const email = document.getElementById("newAdminEmail").value;
+
+        const name = document.getElementById("newAdminName").value.trim();
+        const email = document.getElementById("newAdminEmail").value.trim();
         const password = document.getElementById("newAdminPassword").value;
-        
+
         try {
             const response = await fetch(`${API_URL}/users/admin`, {
                 method: "POST",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ name, email, password })
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) {
-                alert("Sub-admin created successfully!");
+                showToast("Campus staff admin provisioned successfully!", "success");
                 createAdminForm.reset();
                 loadAdminsList();
             } else {
-                alert(data.message || "Failed to create admin");
+                alert(data.message || "Failed to create administrator");
             }
         } catch (err) {
-            console.error(err);
-            alert("Connection error");
+            console.error("Create admin error:", err);
+            alert("Network error while provisioning admin.");
         }
     });
 }
 
-async function revokeAdminAccess(id) {
-    if (!confirm("Are you sure you want to revoke this admin's access?")) return;
-    
+window.revokeAdminAccess = async function (id) {
+    if (!confirm("Are you sure you want to revoke this administrator's access credentials?")) return;
+
     try {
         const response = await fetch(`${API_URL}/users/admin/${id}`, {
             method: "DELETE",
             headers: getAuthHeaders()
         });
-        
+
+        const data = await response.json();
+
         if (response.ok) {
-            alert("Admin access revoked");
+            showToast("Admin access successfully revoked", "info");
             loadAdminsList();
         } else {
-            const data = await response.json();
-            alert(data.message || "Failed to revoke access");
+            alert(data.message || "Failed to revoke admin credentials");
         }
     } catch (err) {
-        console.error(err);
-        alert("Connection error");
+        console.error("Revoke admin error:", err);
+        alert("Network error revoking admin access.");
     }
+};
+
+// =========================================================
+// RUN INITIAL CHECK
+// =========================================================
+
+if (adminToken) {
+    showAdminDashboard();
+} else {
+    if (adminDashboard) adminDashboard.style.display = "none";
+    if (adminLogin) adminLogin.style.display = "flex";
 }
