@@ -14,14 +14,18 @@ const frontendPath = path.join(__dirname, "..", "frontend");
 
 // 1. Security HTTP headers
 app.use(helmet({
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false,
+    crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://accounts.google.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-            imgSrc: ["'self'", "data:", "*"],
-            connectSrc: ["'self'", "*"]
+            frameSrc: ["'self'", "https://accounts.google.com"],
+            imgSrc: ["'self'", "data:", "*", "https://*.googleusercontent.com"],
+            connectSrc: ["'self'", "https://accounts.google.com", "*"]
         }
     }
 }));
@@ -45,6 +49,7 @@ app.use("/api", apiLimiter);
 
 // 4. Body parser, reading data from body into req.body
 app.use(express.json({ limit: "10mb" })); // Limit payload size to 10MB
+app.use(express.urlencoded({ extended: true, limit: "10mb" })); // Support Google form POST redirect
 app.use(cors());
 
 // 5. Data sanitization against NoSQL query injection
@@ -56,6 +61,11 @@ app.use(compression());
 // Routes
 const complaintRoutes = require("./route/complaintRoutes");
 const userRoutes = require("./route/userRoutes");
+const { googleRedirectCallback } = require("./controller/adminLoginController");
+
+// Google OAuth redirect POST handlers
+app.post("/index.html", googleRedirectCallback);
+app.post("/", googleRedirectCallback);
 
 // Serve static frontend files
 app.use(express.static(frontendPath));

@@ -65,6 +65,18 @@
       "updatedAt": "2026-09-19T14:09:07.439Z",
       "reporterName": "Student",
       "reporterEmail": "student@example.com"
+    },
+    {
+      "_id": "muczj8rj_jao7ageu",
+      "title": "Wifi issue in library",
+      "description": "Signal drops frequently",
+      "category": "Internet",
+      "location": "Library 2nd floor",
+      "reportedBy": "muczj8ri_6lw53i4i",
+      "status": "Resolved",
+      "createdAt": "2026-09-22T18:05:58.687Z",
+      "resolutionMessage": "Access point rebooted",
+      "updatedAt": "2026-09-22T18:05:58.687Z"
     }
   ]
 }

@@ -72,4 +72,11 @@ const complaintSchema = new mongoose.Schema(
     }
 );
 
+// Compound & Single B-Tree Indices for O(log N) seeks and sort elimination
+complaintSchema.index({ createdAt: -1 });
+complaintSchema.index({ reportedBy: 1, createdAt: -1 });
+complaintSchema.index({ status: 1, createdAt: -1 });
+complaintSchema.index({ category: 1, createdAt: -1 });
+complaintSchema.index({ status: 1, category: 1, createdAt: -1 });
+
 module.exports = mongoose.model("Complaint", complaintSchema);

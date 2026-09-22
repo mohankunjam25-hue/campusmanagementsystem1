@@ -19,13 +19,33 @@ const adminSchema = new mongoose.Schema(
 
         password: {
             type: String,
-            required: true
+            required: false
         },
 
         role: {
             type: String,
             enum: ["student", "admin", "super_admin"],
             default: "student"
+        },
+
+        googleId: {
+            type: String,
+            default: null
+        },
+
+        avatar: {
+            type: String,
+            default: null
+        },
+
+        resetPasswordOtp: {
+            type: String,
+            default: null
+        },
+
+        resetPasswordExpires: {
+            type: Date,
+            default: null
         }
     },
     {
@@ -33,10 +53,15 @@ const adminSchema = new mongoose.Schema(
     }
 );
 
+// High-performance B-Tree indices
+adminSchema.index({ googleId: 1 }, { sparse: true });
+adminSchema.index({ role: 1 });
+adminSchema.index({ resetPasswordOtp: 1, resetPasswordExpires: 1 });
+
 // Hash password before saving
-adminSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) {
-        next();
+adminSchema.pre("save", async function () {
+    if (!this.password || !this.isModified("password")) {
+        return;
     }
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -44,6 +69,7 @@ adminSchema.pre("save", async function (next) {
 
 // Compare password
 adminSchema.methods.matchPassword = async function (enteredPassword) {
+    if (!this.password) return false;
     return await bcrypt.compare(enteredPassword, this.password);
 };
 

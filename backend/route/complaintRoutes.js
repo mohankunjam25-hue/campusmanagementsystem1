@@ -7,14 +7,18 @@ const {
     createComplaint,
     getComplaints,
     getComplaintById,
-    updateComplaint
+    updateComplaint,
+    getComplaintStats
 } = require("../controller/complaintController");
 
 // Create complaint
 router.post("/", protect, upload.single("image"), createComplaint);
 
-// Get all complaints
+// Get complaints (paginated & filtered)
 router.get("/", protect, getComplaints);
+
+// Get complaint analytics / statistics (O(1) covered index / in-memory counters)
+router.get("/stats", protect, getComplaintStats);
 
 // Get single complaint
 router.get("/:id", protect, getComplaintById);
