@@ -23,9 +23,52 @@
       "password": "1234",
       "role": "student",
       "createdAt": "2026-09-19T14:25:17.021Z"
+    },
+    {
+      "id": "mud6ac1s_i6dl8hm8",
+      "name": "Super Admin",
+      "email": "super@campuscare.com",
+      "password": "$2b$10$CxqPNVSBnPwo57rKrViE5efjVi700G.85B5JRvlRsTRZlNiK2Ds2a",
+      "role": "super_admin",
+      "createdAt": "2026-09-22T21:15:00.352Z"
+    },
+    {
+      "id": "mud6e1im_hxkxwfu1",
+      "name": "Mohan Kunjam",
+      "email": "mohankunjam25@navgurukul.org",
+      "role": "student",
+      "googleId": "113723146344115564861",
+      "avatar": "https://lh3.googleusercontent.com/a/ACg8ocJeZlrLpRb28Hfz4tkMjja3HsjSlSFdH90Jm6heTvxc9Vg5WQ1D=s96-c",
+      "createdAt": "2026-09-22T21:17:53.326Z"
     }
   ],
   "complaints": [
+    {
+      "_id": "c_fresh_hus12u9r",
+      "title": "Projector Display Cable Missing",
+      "description": "HDMI connector cable is broken in Classroom 302. Faculty unable to connect laptop for presentations.",
+      "category": "Other",
+      "location": "Academic Block 3, Room 302",
+      "reportedBy": "mu8gur11_vchr1m86",
+      "status": "Pending",
+      "createdAt": "2026-09-22T20:02:09.847Z",
+      "updatedAt": "2026-09-22T20:02:09.847Z",
+      "reporterName": "Mohanlal Sharma",
+      "reporterEmail": "mohanlal@gmail.com"
+    },
+    {
+      "_id": "c_fresh_qos44pr0",
+      "title": "Air Conditioner Not Cooling in Seminar Hall",
+      "description": "The main split AC in Hall B is blowing ambient room temperature air. Upcoming guest lecture requires temperature control.",
+      "category": "Other",
+      "location": "Seminar Hall B",
+      "reportedBy": "mu8hbvfh_ngaqcc7h",
+      "status": "Pending",
+      "createdAt": "2026-09-22T18:47:09.847Z",
+      "updatedAt": "2026-09-22T18:47:09.847Z",
+      "reporterName": "Soniya Verma",
+      "reporterEmail": "soniya@gmail.com"
+    },
     {
       "_id": "mu8hcslv_ezpbnd5w",
       "title": "food",
@@ -77,6 +120,20 @@
       "createdAt": "2026-09-22T18:05:58.687Z",
       "resolutionMessage": "Access point rebooted",
       "updatedAt": "2026-09-22T18:05:58.687Z"
+    },
+    {
+      "_id": "mud6edvf_iatuiypv",
+      "title": "fsafd",
+      "description": "sadfdsf",
+      "category": "Water",
+      "location": "afdadsf",
+      "reportedBy": "mud6e1im_hxkxwfu1",
+      "image": null,
+      "status": "Pending",
+      "createdAt": "2026-09-22T21:18:09.339Z",
+      "updatedAt": "2026-09-22T21:18:09.339Z",
+      "reporterName": "Mohan Kunjam",
+      "reporterEmail": "mohankunjam25@navgurukul.org"
     }
   ]
 }

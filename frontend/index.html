@@ -6,6 +6,11 @@
 
     <title>CampusCare - Complaint Management System</title>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="style.css">
@@ -22,7 +27,7 @@
 
         <div class="login-header">
             <div class="logo" style="display:flex; justify-content:center; align-items:center; gap:8px;">
-                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:#2563eb;"></i>
+                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:var(--primary);"></i>
                 CampusCare
             </div>
             <h1>Welcome Back</h1>
@@ -47,7 +52,7 @@
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
-                <a href="#" id="forgotPasswordLink" style="font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 500; transition: color 0.2s ease;">Forgot password?</a>
+                <a href="#" id="forgotPasswordLink" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500; transition: color 0.2s ease;">Forgot password?</a>
             </div>
 
             <button type="submit" class="primary-btn" style="width: 100%;">
@@ -63,7 +68,7 @@
 
         <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
             <span style="color: #64748b;">Don't have an account?</span>
-            <a href="#" id="registerBtn" style="color: #2563eb; font-weight: 600; text-decoration: none;">Sign up</a>
+            <a href="#" id="registerBtn" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign up</a>
         </div>
 
         <div class="admin-login-box" style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
@@ -88,7 +93,7 @@
 
         <div class="login-header">
             <div class="logo" style="display:flex; justify-content:center; align-items:center; gap:8px;">
-                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:#2563eb;"></i>
+                <i data-lucide="graduation-cap" style="width:28px;height:28px;color:var(--primary);"></i>
                 CampusCare
             </div>
             <h1>Create Account</h1>
@@ -133,7 +138,7 @@
 
         <div class="login-links" style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 25px; font-size: 14px;">
             <span style="color: #64748b;">Already have an account?</span>
-            <a href="#" id="backToLoginBtn" style="color: #2563eb; font-weight: 600; text-decoration: none;">Sign in</a>
+            <a href="#" id="backToLoginBtn" style="color: var(--primary); font-weight: 600; text-decoration: none;">Sign in</a>
         </div>
 
     </div>
@@ -665,20 +670,20 @@
                 </div>
 
                 <form id="changePasswordForm">
-                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+                    <div style="background: #eff6ff; border: 1px solid #b3d5ff; border-radius: 6px; padding: 18px; margin-bottom: 24px;">
                         <div style="display: flex; align-items: flex-start; gap: 12px;">
-                            <i data-lucide="mail-check" style="width: 20px; height: 20px; color: #2563eb; flex-shrink: 0; margin-top: 2px;"></i>
+                            <i data-lucide="mail-check" style="width: 20px; height: 20px; color: var(--primary); flex-shrink: 0; margin-top: 2px;"></i>
                             <div style="flex: 1;">
-                                <h4 style="margin: 0 0 4px 0; font-size: 14px; color: #1e40af; font-weight: 600;">Email OTP Verification</h4>
-                                <p style="margin: 0 0 12px 0; font-size: 13px; color: #3b82f6; line-height: 1.4;">
+                                <h4 style="margin: 0 0 4px 0; font-size: 14px; color: #1c1917; font-weight: 600;">Email OTP Verification</h4>
+                                <p style="margin: 0 0 12px 0; font-size: 13px; color: #57534e; line-height: 1.4;">
                                     Click below to send a 6-digit verification code to your registered email to safely authorize password update.
                                 </p>
                                 <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-                                    <button type="button" id="sendChangeOtpBtn" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; background: #ffffff; border: 1px solid #93c5fd; color: #1d4ed8;">
+                                    <button type="button" id="sendChangeOtpBtn" class="secondary-btn" style="padding: 8px 16px; font-size: 13px; background: #ffffff; border: 1px solid #b3d5ff; color: var(--primary);">
                                         <i data-lucide="send" style="width: 14px; height: 14px;"></i>
                                         <span>Send OTP to My Email</span>
                                     </button>
-                                    <span id="changeOtpStatus" style="font-size: 13px; font-weight: 600; color: #16a34a; display: none;"></span>
+                                    <span id="changeOtpStatus" style="font-size: 13px; font-weight: 600; color: #15b077; display: none;"></span>
                                 </div>
                             </div>
                         </div>
@@ -779,7 +784,7 @@
         <div id="forgotStep1">
             <div class="auth-modal-header">
                 <div class="auth-icon-circle">
-                    <i data-lucide="key-round" style="width: 24px; height: 24px; color: #2563eb;"></i>
+                    <i data-lucide="key-round" style="width: 24px; height: 24px; color: var(--primary);"></i>
                 </div>
                 <h3>Reset Password</h3>
                 <p>Enter your student email address to receive a 6-digit verification code.</p>
@@ -805,7 +810,7 @@
         <div id="forgotStep2" class="hidden">
             <div class="auth-modal-header">
                 <div class="auth-icon-circle success-circle">
-                    <i data-lucide="shield-check" style="width: 24px; height: 24px; color: #16a34a;"></i>
+                    <i data-lucide="shield-check" style="width: 24px; height: 24px; color: #15b077;"></i>
                 </div>
                 <h3>Enter Verification Code</h3>
                 <p>We've dispatched a 6-digit verification code to <strong id="sentOtpEmail"></strong></p>
@@ -841,7 +846,7 @@
                 </button>
 
                 <div style="text-align: center; margin-top: 15px;">
-                    <a href="#" id="resendOtpBtn" style="font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 500;">Didn't receive code? Resend OTP</a>
+                    <a href="#" id="resendOtpBtn" style="font-size: 13px; color: var(--primary); text-decoration: none; font-weight: 500;">Didn't receive code? Resend OTP</a>
                 </div>
             </form>
         </div>
@@ -852,6 +857,7 @@
 
 
 <!-- JAVASCRIPT -->
+<script src="dsa.js"></script>
 <script src="ui.js"></script>
 <script src="script.js"></script>
 

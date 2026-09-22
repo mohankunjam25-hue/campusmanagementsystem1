@@ -184,29 +184,32 @@ const loginUser = async (req, res) => {
 
 const createAdmin = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, department, role } = req.body;
         if (!name || !email || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
         const normalizedEmail = normalizeEmail(email);
+        const assignedRole = role === "super_admin" ? "super_admin" : "admin";
+        const assignedDepartment = department || "General Campus Administration";
 
         if (isDatabaseReady()) {
             const existing = await User.findOne({ email: normalizedEmail });
-            if (existing) return res.status(400).json({ message: "User already exists" });
+            if (existing) return res.status(400).json({ message: "Administrator with this email already exists" });
 
             const user = await User.create({
                 name: String(name).trim(),
                 email: normalizedEmail,
                 password,
-                role: "admin"
+                role: assignedRole,
+                department: assignedDepartment
             });
-            return res.status(201).json({ message: "Admin created successfully" });
+            return res.status(201).json({ message: "Administrator provisioned successfully", user: { id: user._id, name: user.name, email: user.email, role: user.role, department: user.department } });
         }
 
-        // O(1) Unique Index Check
+        // O(1) Unique Index Check in Fallback Store
         const existing = storeFindUserByEmail(normalizedEmail);
         if (existing) {
-            return res.status(400).json({ message: "User already exists" });
+            return res.status(400).json({ message: "Administrator with this email already exists" });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -216,54 +219,69 @@ const createAdmin = async (req, res) => {
             name: String(name).trim(),
             email: normalizedEmail,
             password: hashedPassword,
-            role: "admin",
+            role: assignedRole,
+            department: assignedDepartment,
             createdAt: new Date().toISOString()
         };
 
         // O(1) In-memory Hash Map Insertion & Async Save
         storeUpsertUser(newAdmin);
 
-        return res.status(201).json({ message: "Admin created successfully" });
+        return res.status(201).json({ message: "Administrator provisioned successfully", user: { id: newAdmin.id, name: newAdmin.name, email: newAdmin.email, role: newAdmin.role, department: newAdmin.department } });
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to create admin" });
+        console.error("Create admin error:", error);
+        res.status(500).json({ message: "Failed to create administrator", error: error.message });
     }
 };
 
 const getAdmins = async (req, res) => {
     try {
         if (isDatabaseReady()) {
-            const admins = await User.find({ role: "admin" }).select("-password");
+            const admins = await User.find({ role: { $in: ["admin", "super_admin"] } }).select("-password").lean();
             return res.status(200).json(admins);
         }
 
-        const users = getUsers().filter(u => u.role === "admin").map(u => {
+        const users = getUsers().filter(u => u.role === "admin" || u.role === "super_admin").map(u => {
             const { password, ...rest } = u;
             return rest;
         });
         return res.status(200).json(users);
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to fetch admins" });
+        console.error("Fetch admins error:", error);
+        res.status(500).json({ message: "Failed to fetch administrator directory" });
     }
 };
 
 const deleteAdmin = async (req, res) => {
     try {
         const { id } = req.params;
+
+        // Prevent Super Admin from self-revoking
+        const currentUserId = String(req.user?._id || req.user?.id || "");
+        if (currentUserId && currentUserId === String(id)) {
+            return res.status(400).json({ message: "Security Warning: You cannot revoke your own Super Admin credentials." });
+        }
+
         if (isDatabaseReady()) {
+            const target = await User.findById(id);
+            if (!target) return res.status(404).json({ message: "Administrator not found" });
             await User.findByIdAndDelete(id);
         } else {
+            const target = storeFindUserById(id);
+            if (!target) return res.status(404).json({ message: "Administrator not found" });
             storeDeleteUserById(id);
         }
 
         // Invalidate LRU session cache
         userAuthCache.invalidate(id);
 
-        return res.status(200).json({ message: "Admin deleted" });
+        return res.status(200).json({ message: "Administrator access credentials revoked successfully" });
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to delete admin" });
+        console.error("Revoke admin error:", error);
+        res.status(500).json({ message: "Failed to revoke administrator credentials" });
     }
 };
 

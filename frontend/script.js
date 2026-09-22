@@ -16,6 +16,10 @@ let currentUser = JSON.parse(localStorage.getItem("campusUser"));
 let userToken = localStorage.getItem("campusToken");
 let googleClientId = "";
 let isEmailDeliveryConfigured = false;
+let studentComplaintsCache = [];
+const studentComplaintStore = (typeof CampusDSA !== "undefined" && CampusDSA.ComplaintStore)
+    ? new CampusDSA.ComplaintStore()
+    : null;
 
 const API_URL = "/api";
 
@@ -24,6 +28,17 @@ function getAuthHeaders() {
     return {
         "Authorization": `Bearer ${userToken}`
     };
+}
+
+// Helper: Escape HTML
+function escapeHTML(value) {
+    if (!value) return "";
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 // Check for URL redirect errors or messages
@@ -482,9 +497,11 @@ async function loadComplaints() {
     const recentComplaints = document.getElementById("recentComplaints");
     const complaintsList = document.getElementById("complaintsList");
     
-    // Show skeletons
-    if (recentComplaints) recentComplaints.innerHTML = getSkeletonCard() + getSkeletonCard();
-    if (complaintsList) complaintsList.innerHTML = getSkeletonCard() + getSkeletonCard();
+    // Show skeletons only on initial empty load
+    if (!studentComplaintsCache || studentComplaintsCache.length === 0) {
+        if (recentComplaints) recentComplaints.innerHTML = getSkeletonCard() + getSkeletonCard();
+        if (complaintsList) complaintsList.innerHTML = getSkeletonCard() + getSkeletonCard();
+    }
 
     try {
         const response = await fetch(`${API_URL}/complaints`, {
@@ -512,15 +529,28 @@ async function loadComplaints() {
             return String(reportedById) === String(currentUser.id);
         });
 
-        // Statistics
-        if (document.getElementById("totalComplaints")) {
-            document.getElementById("totalComplaints").textContent = userComplaints.length;
-            document.getElementById("pendingComplaints").textContent = userComplaints.filter(c => c.status === "Pending").length;
-            document.getElementById("progressComplaints").textContent = userComplaints.filter(c => c.status === "In Progress").length;
-            document.getElementById("resolvedComplaints").textContent = userComplaints.filter(c => c.status === "Resolved").length;
+        studentComplaintsCache = userComplaints;
+        if (studentComplaintStore) {
+            studentComplaintStore.load(userComplaints);
         }
 
-        // Recent complaints
+        // Statistics (O(1) from algorithmic multi-index store)
+        if (document.getElementById("totalComplaints")) {
+            if (studentComplaintStore) {
+                const metrics = studentComplaintStore.getMetrics();
+                document.getElementById("totalComplaints").textContent = metrics.total;
+                document.getElementById("pendingComplaints").textContent = metrics.pending;
+                document.getElementById("progressComplaints").textContent = metrics.inProgress;
+                document.getElementById("resolvedComplaints").textContent = metrics.resolved;
+            } else {
+                document.getElementById("totalComplaints").textContent = userComplaints.length;
+                document.getElementById("pendingComplaints").textContent = userComplaints.filter(c => c.status === "Pending").length;
+                document.getElementById("progressComplaints").textContent = userComplaints.filter(c => c.status === "In Progress").length;
+                document.getElementById("resolvedComplaints").textContent = userComplaints.filter(c => c.status === "Resolved").length;
+            }
+        }
+
+        // Recent complaints (Schwartzian transform sort)
         if (recentComplaints) {
             if (userComplaints.length === 0) {
                 recentComplaints.innerHTML = `
@@ -531,11 +561,14 @@ async function loadComplaints() {
                     </div>
                 `;
             } else {
-                recentComplaints.innerHTML = userComplaints.slice(0, 5).map(complaintCard).join("");
+                const sortedRecent = (typeof CampusDSA !== "undefined" && CampusDSA.SortAlgorithms)
+                    ? CampusDSA.SortAlgorithms.sortByDateDesc(userComplaints, "createdAt").slice(0, 5)
+                    : [...userComplaints].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 5);
+                recentComplaints.innerHTML = sortedRecent.map(complaintCard).join("");
             }
         }
 
-        filterComplaints(userComplaints);
+        filterComplaints();
         
         // Init icons after rendering
         initIcons();
@@ -545,39 +578,65 @@ async function loadComplaints() {
     }
 }
 
-// ================= FILTER =================
+// ================= FILTER (Prefix Trie + Inverted Index + Levenshtein DP) =================
 
-function filterComplaints(data) {
+function filterComplaints() {
     const searchInput = document.getElementById("searchComplaint");
     const statusInput = document.getElementById("statusFilter");
     const categoryInput = document.getElementById("categoryFilter");
 
     if (!searchInput || !statusInput || !categoryInput) return;
 
-    const search = searchInput.value.toLowerCase();
+    const search = searchInput.value.trim();
     const status = statusInput.value;
     const category = categoryInput.value;
 
-    const result = data.filter(function (c) {
-        return (
-            c.title.toLowerCase().includes(search) &&
-            (status === "all" || c.status === status) &&
-            (category === "all" || c.category === category)
-        );
-    });
+    let result;
+    if (studentComplaintStore) {
+        // High-performance algorithmic multi-index & fuzzy search
+        result = studentComplaintStore.query({
+            status: status,
+            category: category,
+            query: search,
+            fuzzy: true
+        });
+    } else {
+        const queryLower = search.toLowerCase();
+        result = (studentComplaintsCache || []).filter(function (c) {
+            return (
+                (!queryLower || (c.title || "").toLowerCase().includes(queryLower) || (c.description || "").toLowerCase().includes(queryLower)) &&
+                (status === "all" || c.status === status) &&
+                (category === "all" || c.category === category)
+            );
+        });
+    }
 
     const complaintsList = document.getElementById("complaintsList");
     if (complaintsList) {
-        if (result.length === 0) {
+        if (!result || result.length === 0) {
             complaintsList.innerHTML = `
                 <div class="empty-state">
-                    <i data-lucide="search-X" style="width:48px;height:48px;color:#cbd5e1;margin-bottom:10px;"></i>
+                    <i data-lucide="search-x" style="width:48px;height:48px;color:#cbd5e1;margin-bottom:10px;"></i>
                     <h3>No complaints found</h3>
                     <p>Your complaints will appear here.</p>
                 </div>
             `;
         } else {
-            complaintsList.innerHTML = result.map(complaintCard).join("");
+            const sortedList = (typeof CampusDSA !== "undefined" && CampusDSA.SortAlgorithms)
+                ? CampusDSA.SortAlgorithms.sortByDateDesc(result, "createdAt")
+                : [...result].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+            if (typeof CampusDSA !== "undefined" && CampusDSA.KeyedDOMReconciler) {
+                CampusDSA.KeyedDOMReconciler.reconcile(
+                    complaintsList,
+                    sortedList,
+                    c => c._id || c.id,
+                    complaintCard,
+                    "div"
+                );
+            } else {
+                complaintsList.innerHTML = sortedList.map(complaintCard).join("");
+            }
         }
     }
     
@@ -589,27 +648,38 @@ function filterComplaints(data) {
 
 function complaintCard(c) {
     const id = c._id || c.id;
+    const status = c.status || "Pending";
+    const statusClass = "status-" + status.toLowerCase().replace(/\s+/g, '-');
     return `
-        <div class="complaint-card" onclick="showDetails('${id}')">
-            <small>${c.category}</small>
-            <h3>${c.title}</h3>
-            <p style="display:flex;align-items:center;gap:5px;"><i data-lucide="map-pin" style="width:16px;height:16px;"></i> ${c.location}</p>
-            <p>${c.description}</p>
-            <b>${c.status}</b>
+        <div class="complaint-card" data-status="${status}" onclick="showDetails('${id}')">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <small class="category-badge">${escapeHTML(c.category || "General")}</small>
+                <b class="status-badge ${statusClass}">${escapeHTML(status)}</b>
+            </div>
+            <h3>${escapeHTML(c.title || "")}</h3>
+            <p style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:8px;">
+                <i data-lucide="map-pin" style="width:14px;height:14px;color:var(--primary);flex-shrink:0;"></i>
+                ${escapeHTML(c.location || "Campus")}
+            </p>
+            <p style="font-size:13.5px;color:var(--muted);line-height:1.45;">${escapeHTML(c.description || "")}</p>
         </div>
     `;
 }
 
-// ================= SEARCH =================
+// ================= INSTANT CLIENT FILTERING (Amortized Debounce) =================
+
+const debouncedStudentFilter = (typeof CampusDSA !== "undefined" && CampusDSA.debounce)
+    ? CampusDSA.debounce(filterComplaints, 60)
+    : filterComplaints;
 
 const searchComplaint = document.getElementById("searchComplaint");
-if (searchComplaint) searchComplaint.oninput = function () { loadComplaints(); };
+if (searchComplaint) searchComplaint.oninput = function () { debouncedStudentFilter(); };
 
 const statusFilter = document.getElementById("statusFilter");
-if (statusFilter) statusFilter.onchange = function () { loadComplaints(); };
+if (statusFilter) statusFilter.onchange = function () { filterComplaints(); };
 
 const categoryFilter = document.getElementById("categoryFilter");
-if (categoryFilter) categoryFilter.onchange = function () { loadComplaints(); };
+if (categoryFilter) categoryFilter.onchange = function () { filterComplaints(); };
 
 // ================= CHARACTER COUNT =================
 
@@ -620,44 +690,56 @@ if (complaintDescription) {
     };
 }
 
-// ================= DETAILS =================
+// ================= DETAILS (O(1) Cache-First Resolution) =================
 
 async function showDetails(id) {
-    try {
-        const response = await fetch(`${API_URL}/complaints/${id}`, {
-            headers: getAuthHeaders()
-        });
+    let complaint = studentComplaintStore ? studentComplaintStore.getById(id) : null;
 
-        const data = await response.json();
+    // Fallback: fetch from backend only if not cached in store
+    if (!complaint) {
+        try {
+            const response = await fetch(`${API_URL}/complaints/${id}`, {
+                headers: getAuthHeaders()
+            });
 
-        if (!response.ok) {
-            alert(data.message || "Complaint not found");
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message || "Complaint not found");
+                return;
+            }
+
+            complaint = data.complaint;
+        } catch (error) {
+            console.error("Details Error:", error);
             return;
         }
-
-        const complaint = data.complaint;
-        
-        let imageHtml = "";
-        if (complaint.image) {
-            imageHtml = `<p><b>Image:</b><br><img src="${complaint.image}" style="max-width: 100%; border-radius: 8px; margin-top: 10px;" alt="Complaint Image"></p>`;
-        }
-
-        document.getElementById("modalContent").innerHTML = `
-            <h2>${complaint.title}</h2>
-            <p style="display:flex;align-items:center;gap:5px;"><i data-lucide="folder" style="width:16px;height:16px;"></i> <b>Category:</b> ${complaint.category}</p>
-            <p style="display:flex;align-items:center;gap:5px;"><i data-lucide="map-pin" style="width:16px;height:16px;"></i> <b>Location:</b> ${complaint.location}</p>
-            <p style="display:flex;align-items:center;gap:5px;"><i data-lucide="activity" style="width:16px;height:16px;"></i> <b>Status:</b> ${complaint.status}</p>
-            <p><b>Description:</b> ${complaint.description}</p>
-            <p><b>Resolution:</b> ${complaint.resolutionMessage || "Not available"}</p>
-            ${imageHtml}
-        `;
-
-        document.getElementById("detailsModal").classList.remove("hidden");
-        initIcons();
-
-    } catch (error) {
-        console.error("Details Error:", error);
     }
+
+    if (!complaint) return;
+    
+    let imageHtml = "";
+    if (complaint.image) {
+        imageHtml = `<p style="margin-top:14px;"><b>Attached Evidence:</b><br><img src="${complaint.image}" style="max-width: 100%; border-radius: 6px; border: 1px solid var(--border); margin-top: 8px;" alt="Complaint Image"></p>`;
+    }
+
+    const modalStatus = complaint.status || "Pending";
+    const modalStatusClass = "status-" + modalStatus.toLowerCase().replace(/\s+/g, '-');
+
+    document.getElementById("modalContent").innerHTML = `
+        <h2>${escapeHTML(complaint.title || "")}</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px; padding: 14px 16px; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 6px;">
+            <p style="display:flex;align-items:center;gap:6px;margin:0;"><i data-lucide="folder" style="width:16px;height:16px;color:var(--primary);"></i> <b>Category:</b> <span class="category-badge">${escapeHTML(complaint.category || "General")}</span></p>
+            <p style="display:flex;align-items:center;gap:6px;margin:0;"><i data-lucide="map-pin" style="width:16px;height:16px;color:var(--primary);"></i> <b>Location:</b> <span style="color:var(--text);">${escapeHTML(complaint.location || "Campus")}</span></p>
+            <p style="display:flex;align-items:center;gap:6px;margin:0;"><i data-lucide="activity" style="width:16px;height:16px;color:var(--primary);"></i> <b>Status:</b> <span class="status-badge ${modalStatusClass}">${escapeHTML(modalStatus)}</span></p>
+        </div>
+        <p><b>Description:</b><br><span style="color:var(--muted);">${escapeHTML(complaint.description || "No description provided.")}</span></p>
+        <p style="margin-top:14px;"><b>Resolution Update:</b><br><span style="color:var(--muted);">${escapeHTML(complaint.resolutionMessage || "Pending administrative investigation & triage")}</span></p>
+        ${imageHtml}
+    `;
+
+    document.getElementById("detailsModal").classList.remove("hidden");
+    initIcons();
 }
 
 // ================= CLOSE MODAL =================

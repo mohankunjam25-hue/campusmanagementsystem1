@@ -8,7 +8,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -70,7 +70,7 @@
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
         <!-- =========================================================
-             SIDEBAR
+             SIDEBAR (MODERN SAAS PRO CONSOLE)
         ========================================================== -->
         <aside class="admin-sidebar" id="adminSidebar" aria-label="Admin Navigation">
             
@@ -81,13 +81,28 @@
                         <i data-lucide="shield-check"></i>
                     </div>
                     <div class="brand-meta">
-                        <h2>CampusCare</h2>
-                        <span class="badge-tag">Operations Console</span>
+                        <div class="brand-title-wrap">
+                            <h2>CampusCare</h2>
+                            <span class="badge-tag">PRO</span>
+                        </div>
+                        <span class="brand-sub">Operations Console</span>
                     </div>
                 </div>
                 <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar (Ctrl+B)" aria-label="Toggle Sidebar Navigation">
                     <i data-lucide="chevrons-left"></i>
                 </button>
+            </div>
+
+            <!-- Quick Command / Search Bar Trigger (Linear/Raycast style) -->
+            <div class="sidebar-search-wrap">
+                <button type="button" class="sidebar-search-trigger" id="sidebarSearchTrigger" title="Quick Search (Ctrl+K)">
+                    <span class="search-trigger-content">
+                        <i data-lucide="search"></i>
+                        <span class="search-placeholder">Quick search...</span>
+                    </span>
+                    <span class="search-kbd-badge"><kbd>Ctrl</kbd><kbd>K</kbd></span>
+                </button>
+                <span class="nav-tooltip search-tooltip">Quick Search (Ctrl+K)</span>
             </div>
 
             <!-- Sidebar Navigation Menu -->
@@ -100,13 +115,15 @@
                         <a href="#adminOverview" class="nav-item active" data-section="adminOverview">
                             <span class="nav-icon-wrap"><i data-lucide="layout-dashboard"></i></span>
                             <span class="nav-text">Dashboard</span>
-                            <span class="nav-tooltip">Dashboard Overview</span>
+                            <span class="nav-shortcut-hint">Ctrl 1</span>
+                            <span class="nav-tooltip">Dashboard Overview (Ctrl+1)</span>
                         </a>
                         <a href="#allComplaints" class="nav-item" data-section="allComplaints">
                             <span class="nav-icon-wrap"><i data-lucide="inbox"></i></span>
                             <span class="nav-text">All Complaints</span>
                             <span class="nav-badge" id="sidebarPendingBadge" style="display: none;">0</span>
-                            <span class="nav-tooltip">Complaints Queue</span>
+                            <span class="nav-shortcut-hint">Ctrl 2</span>
+                            <span class="nav-tooltip">Complaints Queue (Ctrl+2)</span>
                         </a>
                     </nav>
                 </div>
@@ -136,6 +153,21 @@
                     </nav>
                 </div>
 
+            </div>
+
+            <!-- Live System Status Mini-Card (Linear/Vercel style) -->
+            <div class="sidebar-status-wrap">
+                <div class="sidebar-status-card">
+                    <div class="status-indicator">
+                        <span class="status-dot-ping"></span>
+                        <span class="status-dot-core"></span>
+                    </div>
+                    <div class="status-meta">
+                        <span class="status-title">System Status</span>
+                        <span class="status-sub">Operational &bull; Live</span>
+                    </div>
+                </div>
+                <span class="nav-tooltip status-tooltip">Cloud Network Operational (99.9%)</span>
             </div>
 
             <!-- Sidebar Footer / Admin Profile & Logout -->
@@ -379,6 +411,19 @@
                                 </select>
                             </div>
 
+                            <!-- Dynamic Priority / Sort Dropdown -->
+                            <div class="filter-select-box">
+                                <i data-lucide="arrow-up-down"></i>
+                                <select id="adminSortOrder" title="Dynamic Sort & Priority Triage">
+                                    <option value="smart" selected>Dynamic Priority (Attention &gt; Fresh &gt; Resolved)</option>
+                                    <option value="unattended">Overdue Attention (&gt;24h) First</option>
+                                    <option value="latest">Fresh Inflow (&lt;24h) First</option>
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First (FIFO)</option>
+                                    <option value="resolved">Resolved First</option>
+                                </select>
+                            </div>
+
                             <!-- Hidden original status select for backwards compatibility -->
                             <select id="adminStatus" style="display: none;">
                                 <option value="all">All</option>
@@ -389,10 +434,10 @@
 
                             <!-- View Mode Switcher (Table vs Grid Cards) -->
                             <div class="view-mode-toggle">
-                                <button class="mode-btn active" id="viewTableBtn" title="Dense Table View">
+                                <button class="mode-btn" id="viewTableBtn" title="Dense Table View">
                                     <i data-lucide="table"></i>
                                 </button>
-                                <button class="mode-btn" id="viewCardsBtn" title="Cards Grid View">
+                                <button class="mode-btn active" id="viewCardsBtn" title="Cards Grid View">
                                     <i data-lucide="layout-grid"></i>
                                 </button>
                             </div>
@@ -401,9 +446,88 @@
 
                     </div>
 
+                    <!-- Quick Category Filter Chips (One-tap Readable Filtering) -->
+                    <div class="quick-category-chips" id="quickCategoryChips">
+                        <button type="button" class="category-chip active" data-category="all">
+                            <i data-lucide="layout-grid"></i>
+                            <span>All Categories</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Electricity">
+                            <i data-lucide="zap"></i>
+                            <span>Electricity</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Water">
+                            <i data-lucide="droplet"></i>
+                            <span>Water Supply</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Internet">
+                            <i data-lucide="wifi"></i>
+                            <span>WiFi &amp; Network</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Food">
+                            <i data-lucide="utensils"></i>
+                            <span>Food &amp; Mess</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Hostel">
+                            <i data-lucide="home"></i>
+                            <span>Hostel</span>
+                        </button>
+                        <button type="button" class="category-chip" data-category="Cleaning">
+                            <i data-lucide="sparkles"></i>
+                            <span>Cleaning</span>
+                        </button>
+                    </div>
+
+                    <!-- Active Filter Tags Bar -->
+                    <div id="activeFilterBar" class="active-filter-bar" style="display: none;"></div>
+
+                    <!-- System Overdue Update Reminder Banner -->
+                    <div id="systemReminderBanner" class="system-reminder-banner" style="display: none;">
+                        <div class="system-reminder-info">
+                            <div class="reminder-icon-bubble">
+                                <i data-lucide="bell-ring"></i>
+                            </div>
+                            <div class="reminder-text-block">
+                                <div class="reminder-headline-row">
+                                    <span class="reminder-tag">Action Needed</span>
+                                    <strong class="reminder-title">System Update Reminder</strong>
+                                </div>
+                                <span class="reminder-desc" id="reminderBannerMessage">You have unattended complaints pending for &gt;24 hours that need status updates.</span>
+                            </div>
+                        </div>
+                        <div class="reminder-banner-actions">
+                            <button type="button" class="btn-reminder-review" onclick="scrollToReminderSection()">
+                                <i data-lucide="arrow-down"></i>
+                                <span>Review Overdue (<span id="reminderBannerCount">0</span>)</span>
+                            </button>
+                            <button type="button" class="btn-reminder-skip" onclick="skipAllReminders()" title="Skip updating overdue reminders for now">
+                                <i data-lucide="bell-off"></i>
+                                <span>Skip Reminders</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Skipped Complaints Notice Bar -->
+                    <div id="skippedComplaintsBar" class="skipped-complaints-bar" style="display: none;">
+                        <div class="skipped-bar-info">
+                            <i data-lucide="skip-forward" class="skipped-bar-icon"></i>
+                            <span><strong id="skippedCountLabel">0</strong> complaints skipped from view</span>
+                        </div>
+                        <div class="skipped-bar-actions">
+                            <button type="button" class="btn-skipped-action" id="toggleViewSkippedBtn" onclick="toggleViewSkippedComplaints()">
+                                <i data-lucide="eye" id="toggleSkippedIcon"></i>
+                                <span id="toggleSkippedText">View Skipped</span>
+                            </button>
+                            <button type="button" class="btn-skipped-action btn-restore" id="restoreAllSkippedBtn" onclick="restoreAllSkippedComplaints()">
+                                <i data-lucide="rotate-ccw"></i>
+                                <span>Restore All</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Complaints Content Containers -->
                     <!-- 1. Table View Container -->
-                    <div class="table-view-card" id="adminComplaintTableWrap">
+                    <div class="table-view-card" id="adminComplaintTableWrap" style="display: none;">
                         <div class="table-responsive">
                             <table class="modern-data-table">
                                 <thead>
@@ -412,8 +536,8 @@
                                         <th>Student / Reporter</th>
                                         <th>Category</th>
                                         <th>Location</th>
-                                        <th>Submitted</th>
-                                        <th>Status</th>
+                                        <th>Submitted / Age</th>
+                                        <th>Status &amp; Attention</th>
                                         <th style="text-align: right;">Action</th>
                                     </tr>
                                 </thead>
@@ -425,7 +549,7 @@
                     </div>
 
                     <!-- 2. Cards Grid Container (Alternative View) -->
-                    <div class="admin-complaint-list" id="adminComplaintList" style="display: none;">
+                    <div class="admin-complaint-list" id="adminComplaintList" style="display: flex;">
                         <!-- Populated via JS -->
                     </div>
 
@@ -439,72 +563,119 @@
 
                     <div class="page-title-row">
                         <div>
-                            <h1>Administrator Access Control</h1>
-                            <p>Provision campus staff credentials and revoke administrative roles</p>
+                            <h1>Staff Access Control &amp; Administrators</h1>
+                            <p>Provision campus staff accounts, delegate departmental oversight, and manage security privileges</p>
+                        </div>
+                        <div class="header-action-group">
+                            <button type="button" class="btn-primary" id="openAddAdminModalBtn">
+                                <i data-lucide="user-plus"></i>
+                                <span>Provision Administrator</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="admin-split-layout">
-                        
-                        <!-- Create Sub-Admin Form Card -->
-                        <div class="panel-form-card">
-                            <div class="card-title-group">
-                                <div class="card-icon">
-                                    <i data-lucide="user-plus"></i>
-                                </div>
-                                <div>
-                                    <h3>Provision New Admin</h3>
-                                    <p>Assign administrative rights to campus staff</p>
-                                </div>
+                    <!-- Staff Executive Stats Strip -->
+                    <div class="kpi-stats-grid admin-kpi-grid">
+                        <div class="kpi-card staff-kpi-card" data-admin-role="all" title="Click to view all staff members">
+                            <div class="kpi-icon-wrap" style="color: var(--admin-primary); background: var(--admin-primary-light);">
+                                <i data-lucide="users"></i>
                             </div>
-
-                            <form id="createAdminForm" class="modern-admin-form">
-                                <div class="admin-form-group">
-                                    <label for="newAdminName">Staff Full Name</label>
-                                    <div class="input-with-icon">
-                                        <i data-lucide="user"></i>
-                                        <input type="text" id="newAdminName" placeholder="e.g. Dr. Rajesh Sharma" required>
-                                    </div>
-                                </div>
-
-                                <div class="admin-form-group">
-                                    <label for="newAdminEmail">Institutional Email</label>
-                                    <div class="input-with-icon">
-                                        <i data-lucide="mail"></i>
-                                        <input type="email" id="newAdminEmail" placeholder="r.sharma@campuscare.com" required>
-                                    </div>
-                                </div>
-
-                                <div class="admin-form-group">
-                                    <label for="newAdminPassword">Temporary Password</label>
-                                    <div class="input-with-icon">
-                                        <i data-lucide="key-round"></i>
-                                        <input type="password" id="newAdminPassword" placeholder="Minimum 6 characters" required>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="primary-action-btn">
-                                    <i data-lucide="shield-plus"></i>
-                                    <span>Grant Admin Access</span>
-                                </button>
-                            </form>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Total Staff</span>
+                                <h2 class="kpi-value" id="kpiTotalAdmins">0</h2>
+                                <span class="kpi-hint">Authorized Personnel</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
                         </div>
 
-                        <!-- Active Admins Directory Card -->
-                        <div class="panel-directory-card">
-                            <div class="card-title-group">
-                                <div class="card-icon">
-                                    <i data-lucide="shield"></i>
-                                </div>
-                                <div>
-                                    <h3>Active Administrators</h3>
-                                    <p>Currently authorized staff accounts</p>
-                                </div>
+                        <div class="kpi-card staff-kpi-card" data-admin-role="super_admin" title="Click to filter Super Admins">
+                            <div class="kpi-icon-wrap" style="color: #7c3aed; background: #f5f3ff;">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Super Admins</span>
+                                <h2 class="kpi-value" id="kpiSuperAdmins">0</h2>
+                                <span class="kpi-hint">Full System Access</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card staff-kpi-card" data-admin-role="admin" title="Click to filter Campus Admins">
+                            <div class="kpi-icon-wrap" style="color: #0284c7; background: #f0f9ff;">
+                                <i data-lucide="briefcase"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Campus Admins</span>
+                                <h2 class="kpi-value" id="kpiCampusAdmins">0</h2>
+                                <span class="kpi-hint">Departmental Triage</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="arrow-up-right"></i>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card staff-kpi-card" data-admin-role="health" title="Security Health: Role-Based Access Control Active">
+                            <div class="kpi-icon-wrap" style="color: var(--admin-resolved); background: var(--admin-resolved-light);">
+                                <i data-lucide="shield"></i>
+                            </div>
+                            <div class="kpi-content">
+                                <span class="kpi-label">Security Health</span>
+                                <h2 class="kpi-value" style="font-size: 1.35rem; font-weight: 700; color: var(--admin-resolved); margin-top: 4px;">Protected</h2>
+                                <span class="kpi-hint text-success" style="display: inline-flex; align-items: center; gap: 4px;"><i data-lucide="check-circle" style="width:12px;height:12px;"></i> Verified RBAC</span>
+                            </div>
+                            <div class="kpi-arrow">
+                                <i data-lucide="check"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Administrator Directory Card with Integrated Toolbar & Filter -->
+                    <div class="table-view-card">
+                        
+                        <div class="admin-directory-toolbar">
+                            <div class="table-search-box" style="max-width: 340px;">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="adminStaffSearch" placeholder="Filter staff by name, email, or dept...">
                             </div>
 
-                            <div class="admins-directory-list" id="adminsList">
-                                <!-- Populated via JS -->
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div class="filter-select-box">
+                                    <i data-lucide="filter"></i>
+                                    <select id="adminRoleFilter">
+                                        <option value="all">All Roles</option>
+                                        <option value="super_admin">Super Admins</option>
+                                        <option value="admin">Campus Admins</option>
+                                    </select>
+                                </div>
+
+                                <button type="button" class="btn-secondary" id="refreshAdminsBtn" title="Sync Directory">
+                                    <i data-lucide="rotate-ccw"></i>
+                                    <span>Sync</span>
+                                </button>
                             </div>
+                        </div>
+
+                        <!-- Data Table -->
+                        <div class="table-responsive">
+                            <table class="modern-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Staff Member</th>
+                                        <th>Department Oversight</th>
+                                        <th>Privilege Level</th>
+                                        <th>Date Provisioned</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Access Controls</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminsListTableBody">
+                                    <!-- Populated via JS -->
+                                </tbody>
+                            </table>
                         </div>
 
                     </div>
@@ -570,6 +741,21 @@
                     </a>
                 </div>
 
+                <!-- Overdue System Reminder Alert inside Modal -->
+                <div id="modalReminderAlert" class="modal-reminder-alert" style="display: none;">
+                    <div class="modal-reminder-icon">
+                        <i data-lucide="bell-ring"></i>
+                    </div>
+                    <div class="modal-reminder-text">
+                        <strong>System Update Reminder:</strong>
+                        <span id="modalReminderText">This complaint is waiting for review for &gt;24 hours. Please update its status or skip the reminder for now.</span>
+                    </div>
+                    <button type="button" class="btn-modal-skip-reminder" id="modalInlineSkipReminderBtn" title="Skip reminder for this complaint">
+                        <i data-lucide="bell-off"></i>
+                        <span>Skip Reminder</span>
+                    </button>
+                </div>
+
                 <!-- Update Form -->
                 <form id="resolutionForm" class="resolution-form">
                     <input type="hidden" id="modalComplaintId">
@@ -588,8 +774,14 @@
                         <textarea id="modalResolutionNotes" rows="3" placeholder="Provide action notes (e.g. 'Electrician dispatched to hostel block A. Faulty wiring replaced. Issue closed.')"></textarea>
                     </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn-secondary" id="cancelResolutionBtn">Cancel</button>
+                    <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button type="button" class="btn-secondary" id="cancelResolutionBtn">Cancel</button>
+                            <button type="button" class="btn-secondary btn-skip-modal" id="modalSkipBtn" title="Skip reminder for this complaint">
+                                <i data-lucide="bell-off" id="modalSkipBtnIcon"></i>
+                                <span id="modalSkipBtnText">Skip Reminder</span>
+                            </button>
+                        </div>
                         <button type="submit" class="btn-primary" id="saveResolutionBtn">
                             <i data-lucide="check"></i>
                             <span>Save &amp; Notify Student</span>
@@ -604,8 +796,132 @@
 
 
     <!-- =========================================================
+         PROVISION ADMINISTRATOR MODAL
+    ========================================================== -->
+    <div class="modal-overlay hidden" id="addAdminModal">
+        <div class="modal-dialog">
+            
+            <div class="modal-header">
+                <div class="modal-header-title">
+                    <span class="modal-pretitle">Access Control &amp; Provisioning</span>
+                    <h3>Provision Administrator</h3>
+                </div>
+                <button class="modal-close-btn" id="closeAddAdminModal" aria-label="Close dialog">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form id="createAdminForm" class="resolution-form">
+                    <div class="admin-form-group">
+                        <label for="newAdminName">Full Name</label>
+                        <input type="text" id="newAdminName" class="modern-input" placeholder="e.g. Dr. Rajesh Sharma" required>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="newAdminEmail">Institutional Email Address</label>
+                        <input type="email" id="newAdminEmail" class="modern-input" placeholder="staff@campus.edu" required>
+                    </div>
+
+                    <div class="modal-grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div class="admin-form-group">
+                            <label for="newAdminRole">Access Privilege Level</label>
+                            <select id="newAdminRole" class="modern-select" required>
+                                <option value="admin">Campus Admin (Departmental)</option>
+                                <option value="super_admin">Super Administrator (Full System)</option>
+                            </select>
+                        </div>
+
+                        <div class="admin-form-group">
+                            <label for="newAdminDept">Department Oversight</label>
+                            <select id="newAdminDept" class="modern-select">
+                                <option value="All Departments">All Departments</option>
+                                <option value="Electricity">Electricity &amp; Power</option>
+                                <option value="Water & Sanitation">Water &amp; Sanitation</option>
+                                <option value="Internet & IT">Internet &amp; IT Support</option>
+                                <option value="Hostel Administration">Hostel Administration</option>
+                                <option value="Mess & Dining">Mess &amp; Dining</option>
+                                <option value="Estate & Facilities">Estate &amp; Facilities</option>
+                                <option value="General Admin" selected>General Campus Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-form-group">
+                        <label for="newAdminPassword">Temporary Password</label>
+                        <div style="display: flex; gap: 8px;">
+                            <div style="position: relative; flex: 1;">
+                                <input type="password" id="newAdminPassword" class="modern-input" placeholder="Minimum 8 characters" required style="width: 100%; padding-right: 40px;">
+                                <button type="button" id="toggleAdminPasswordBtn" title="Toggle visibility" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--admin-text-muted); display: flex; align-items: center; justify-content: center; padding: 4px;">
+                                    <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </div>
+                            <button type="button" id="generateAdminPasswordBtn" class="btn-secondary" style="white-space: nowrap; padding: 0 14px; font-size: 0.8125rem;">
+                                <i data-lucide="key"></i>
+                                <span>Generate</span>
+                            </button>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">The user will use these credentials to authenticate into the administrative console.</span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn-secondary" id="cancelAddAdminBtn">Cancel</button>
+                        <button type="submit" class="btn-primary" id="submitAddAdminBtn">
+                            <i data-lucide="user-plus"></i>
+                            <span>Authorize &amp; Provision</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         REVOKE ACCESS CONFIRMATION MODAL
+    ========================================================== -->
+    <div class="modal-overlay hidden" id="revokeAdminModal">
+        <div class="modal-dialog" style="max-width: 480px;">
+            
+            <div class="modal-header">
+                <div class="modal-header-title">
+                    <span class="modal-pretitle" style="color: #dc2626;">Access Control &amp; Revocation</span>
+                    <h3>Revoke Administrator Access</h3>
+                </div>
+                <button class="modal-close-btn" id="closeRevokeModalBtn" aria-label="Close dialog">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div style="display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; background: #fef2f2; border: 1px solid #fee2e2; border-radius: 8px; margin-bottom: 20px;">
+                    <i data-lucide="alert-triangle" style="width: 22px; height: 22px; color: #dc2626; flex-shrink: 0; margin-top: 2px;"></i>
+                    <div style="font-size: 0.85rem; color: #991b1b; line-height: 1.5;">
+                        Are you sure you want to revoke administrative credentials for <strong id="revokeAdminTargetName">Staff Member</strong> (<span id="revokeAdminTargetEmail">email</span>)?
+                        <div style="margin-top: 6px; font-size: 0.8rem; color: #7f1d1d;">This will terminate their active sessions and revoke management privileges immediately.</div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="revokeAdminId">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelRevokeBtn">Cancel</button>
+                    <button type="button" class="btn-primary" id="confirmRevokeBtn" style="background: #dc2626; border-color: #dc2626; color: #ffffff;">
+                        <i data-lucide="trash-2"></i>
+                        <span>Revoke Access</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
          SCRIPTS
     ========================================================== -->
+    <script src="dsa.js"></script>
     <script src="ui.js"></script>
     <script src="admin.js"></script>
 

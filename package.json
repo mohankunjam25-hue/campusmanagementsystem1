@@ -1,0 +1,20 @@
+{
+  "name": "campus-complaint-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack Campus Complaint Management System with algorithmic priority triage",
+  "main": "backend/server.js",
+  "scripts": {
+    "build": "node -c backend/server.js && node -c frontend/admin.js && echo 'Build completed successfully.'",
+    "start": "node backend/server.js",
+    "postinstall": "cd backend && npm install",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "keywords": [
+    "campus",
+    "complaint-management",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}

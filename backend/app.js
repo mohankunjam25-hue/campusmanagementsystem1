@@ -7,7 +7,8 @@ const mongoSanitize = require("express-mongo-sanitize");
 const compression = require("compression");
 const morgan = require("morgan");
 
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const app = express();
 const frontendPath = path.join(__dirname, "..", "frontend");
@@ -21,6 +22,7 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "https://unpkg.com", "https://accounts.google.com"],
+            scriptSrcAttr: ["'unsafe-inline'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://accounts.google.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
             frameSrc: ["'self'", "https://accounts.google.com"],
